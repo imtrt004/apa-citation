@@ -856,6 +856,11 @@ function clean(str) {
   return (str || "").toString().trim();
 }
 
+function getInputValue(id) {
+  const el = document.getElementById(id);
+  return el ? clean(el.value) : "";
+}
+
 function extractDoi(str) {
   if (!str) return "";
   const t = str.trim();
@@ -940,6 +945,11 @@ function formatAuthorsFromMerged(dataAuthors) {
    ============================================================ */
 
 function apaReferenceFromPaper(paper) {
+  // Ensure we never break if paper is weird
+  if (!paper || typeof paper !== "object") {
+    return "";
+  }
+
   const authors = formatAuthorsFromMerged(paper.authors || []);
   const year = paper.year || "n.d.";
   const title = toSentenceCase(paper.title || "");
@@ -1012,10 +1022,11 @@ function apaReferenceFromPaper(paper) {
     ref += ".";
   }
 
-  // DO NOT strip the period before DOIs anymore.
-  ref = ref.replace(/\s+\./g, "."); // just remove stray spaces before periods
-  return ref.trim();
+  // Only remove stray spaces before periods, not the period itself
+  ref = ref.replace(/\s+\./g, ".");
+  return String(ref).trim();
 }
+
 
 
 /* ============================================================
@@ -1049,11 +1060,6 @@ function updateManualFormForType(type) {
 /* ============================================================
    MANUAL APA GENERATOR
    ============================================================ */
-
-function getInputValue(id) {
-  const el = document.getElementById(id);
-  return el ? clean(el.value) : "";
-}
 
 function buildManualApaReference() {
   const type = document.getElementById("source-type").value;
@@ -1244,7 +1250,7 @@ const doiUrl    = getInputValue("doi-input");
     }
   }
 
-  ref = ref.replace(/\.\s+(https?:\/\/)/, " $1");
+  // Clean up: remove extra spaces before periods, but keep the periods
   ref = ref.replace(/\s+\./g, ".");
   return ref.trim();
 }
@@ -1347,14 +1353,24 @@ function renderS2Results(list) {
    ============================================================ */
 
 function generateS2Citation(paper) {
-  const ref = (paper);
+  const rawRef = apaReferenceFromPaper(paper);
+  const ref = String(rawRef || "").trim();
+
   const box = document.getElementById("s2-citation");
   const btn = document.getElementById("s2-copy-btn");
+
+  if (!ref) {
+    box.classList.remove("empty");
+    box.innerHTML = "<span class=\"citation-line\">No reference could be generated.</span>";
+    btn.disabled = true;
+    return;
+  }
 
   box.classList.remove("empty");
   box.innerHTML = `<span class="citation-line">${ref}</span>`;
   btn.disabled = false;
 }
+
 
 async function searchSemanticScholar() {
   const query = clean(document.getElementById("s2-query").value);
