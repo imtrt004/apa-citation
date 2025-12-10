@@ -1000,7 +1000,7 @@ function apaReferenceFromPaper(paper) {
 
   // Journal block – APA: Journal, volume(issue), pages.
   if (journalName) {
-    ref += `${journalName}`;
+    ref += `<i>${journalName}</i>`;
     if (volume) {
       // volume italic, issue plain
       ref += `, <i>${volume}</i>`;
