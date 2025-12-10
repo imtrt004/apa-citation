@@ -315,11 +315,61 @@
       </footer>
     </div>
 
-    <script src="app.js"></script>
     <script>
       // Update footer year
       document.getElementById("about-year").textContent =
         new Date().getFullYear();
+      
+      function initThemeToggle() {
+  const THEME_KEY = "apa-7th-theme";
+  const root = document.documentElement;
+  const toggle = document.getElementById("theme-toggle");
+
+  function applyTheme(theme) {
+    const normalized = theme === "light" ? "light" : "dark";
+    root.setAttribute("data-theme", normalized);
+    try {
+      localStorage.setItem(THEME_KEY, normalized);
+    } catch (e) {
+      // ignore storage errors
+    }
+  }
+
+  // --- Initial theme sync ---
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved === "light" || saved === "dark") {
+      // use saved preference
+      applyTheme(saved);
+    } else {
+      // if head script already set data-theme, respect that
+      const existing = root.getAttribute("data-theme");
+      if (existing === "light" || existing === "dark") {
+        applyTheme(existing);
+      } else {
+        const prefersLight =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: light)").matches;
+        applyTheme(prefersLight ? "light" : "dark");
+      }
+    }
+  } catch (e) {
+    // fallback
+    root.setAttribute("data-theme", "dark");
+  }
+
+  // --- Wire up toggle button (may not exist on all pages) ---
+  if (!toggle) return;
+
+  toggle.addEventListener("click", () => {
+    const current = root.getAttribute("data-theme") || "dark";
+    const next = current === "dark" ? "light" : "dark";
+    applyTheme(next);
+  });
+}
+
+// Run AFTER DOM is ready so it works on every page
+document.addEventListener("DOMContentLoaded", initThemeToggle);
     </script>
 
     <style>
