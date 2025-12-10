@@ -1,0 +1,465 @@
+:root {
+      --bg: #020617;
+      --bg-soft: #020617;
+      --card: rgba(15, 23, 42, 0.95);
+      --card-soft: rgba(15, 23, 42, 0.9);
+      --accent: #38bdf8;
+      --accent-soft: rgba(56, 189, 248, 0.2);
+      --border-subtle: rgba(148, 163, 184, 0.3);
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --text-soft: #6b7280;
+      --error: #f97373;
+      --shadow-soft: 0 24px 80px rgba(15, 23, 42, 0.75);
+      --radius-lg: 1.5rem;
+      --radius-md: 0.9rem;
+      --radius-sm: 0.6rem;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, #0f172a, #020617 55%),
+        radial-gradient(circle at bottom right, #0b1120, #020617 65%);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem 3rem;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 1120px;
+      margin: auto;
+    }
+
+    .header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(15, 23, 42, 0.6);
+      color: var(--text-soft);
+      backdrop-filter: blur(10px);
+      width: fit-content;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-soft);
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 3vw, 2.3rem);
+      margin: 0;
+      letter-spacing: -0.03em;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    h1 span.highlight {
+      color: var(--accent);
+    }
+
+    .subtitle {
+      margin: 0.25rem 0 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      max-width: 34rem;
+      line-height: 1.4;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2.4fr);
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 880px) {
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      padding: 1.4rem 1.5rem 1.6rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right,
+        rgba(56, 189, 248, 0.12),
+        transparent 55%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    .card-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-title-pill {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.15rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-soft);
+    }
+
+    .card-description {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      margin-bottom: 0.7rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text-soft);
+      margin-bottom: 0.25rem;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 0.75rem;
+    }
+
+    .field {
+      flex: 1 1 140px;
+      min-width: 0;
+    }
+
+    .field-full {
+      width: 100%;
+      margin-bottom: 0.75rem;
+    }
+
+    .input, select, textarea {
+      width: 100%;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(51, 65, 85, 0.9);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-main);
+      font-size: 0.85rem;
+      padding: 0.6rem 0.75rem;
+      outline: none;
+      transition: border-color 0.16s ease, box-shadow 0.16s ease,
+        background 0.16s ease, transform 0.06s ease;
+    }
+
+    .input::placeholder,
+    textarea::placeholder {
+      color: var(--text-soft);
+    }
+
+    .input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.3);
+      background: rgba(15, 23, 42, 0.98);
+      transform: translateY(-0.5px);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+      max-height: 220px;
+      line-height: 1.4;
+    }
+
+    .hint {
+      margin-top: 0.2rem;
+      font-size: 0.72rem;
+      color: var(--text-soft);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.4rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      padding: 0.55rem 1.1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: linear-gradient(135deg, #38bdf8, #22c55e);
+      color: #020617;
+      box-shadow: 0 16px 35px rgba(56, 189, 248, 0.28);
+      transition: transform 0.12s ease, box-shadow 0.12s ease,
+        filter 0.12s ease;
+      white-space: nowrap;
+    }
+
+    .btn.secondary {
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      box-shadow: none;
+    }
+
+    .btn:disabled {
+      opacity: 0.65;
+      cursor: default;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .btn:not(:disabled):hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 22px 40px rgba(56, 189, 248, 0.38);
+    }
+
+    .btn-icon {
+      font-size: 1rem;
+    }
+
+    .pill {
+      border-radius: 999px;
+      border: 1px dashed rgba(148, 163, 184, 0.5);
+      padding: 0.25rem 0.6rem;
+      font-size: 0.72rem;
+      color: var(--text-soft);
+    }
+
+    .citation-output {
+      margin-top: 0.8rem;
+      background: var(--bg-soft);
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      padding: 0.85rem 1.1rem;
+      font-family: "Georgia", "Times New Roman", serif;
+      font-size: 0.85rem;
+      line-height: 1.5;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .citation-output.empty {
+      border-style: dashed;
+      color: var(--text-soft);
+      font-style: italic;
+    }
+
+    .citation-line {
+      display: block;
+      padding-left: 2em;
+      text-indent: -2em;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .citation-label {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      margin-bottom: 0.2rem;
+    }
+
+    .error {
+      font-size: 0.75rem;
+      color: var(--error);
+      margin-top: 0.25rem;
+    }
+
+    /* Semantic Scholar section */
+    .results {
+      margin-top: 0.7rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    .paper {
+      border-radius: var(--radius-md);
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      padding: 0.6rem 0.75rem;
+    }
+
+    .paper-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+
+    .paper-title {
+      font-size: 0.86rem;
+      font-weight: 500;
+      margin-bottom: 0.15rem;
+    }
+
+    .paper-meta {
+      font-size: 0.74rem;
+      color: var(--text-soft);
+    }
+
+    .paper-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      align-items: flex-end;
+    }
+
+    .paper-link {
+      font-size: 0.74rem;
+      color: var(--accent);
+      text-decoration: none;
+      opacity: 0.85;
+    }
+
+    .paper-link:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    .guide-card {
+      margin-top: 1.5rem;
+      background: var(--card-soft);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(148, 163, 184, 0.23);
+      padding: 1.3rem 1.5rem 1.4rem;
+    }
+
+    .guide-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+      margin: 0 0 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .guide-title span {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-soft);
+    }
+
+    .guide-section-title {
+      font-size: 0.86rem;
+      font-weight: 600;
+      margin: 0.8rem 0 0.25rem;
+    }
+
+    .guide-text {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin: 0.15rem 0;
+    }
+
+    .guide-list {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin: 0.1rem 0 0.15rem 0.9rem;
+      padding-left: 0.4rem;
+    }
+
+    .guide-list li {
+      margin: 0.08rem 0;
+    }
+
+    .guide-note {
+      font-size: 0.72rem;
+      color: var(--text-soft);
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+      font-size: 0.75rem;
+      padding: 0.05rem 0.25rem;
+      border-radius: 0.4rem;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: var(--accent);
+    }
+
+    .footer {
+      margin-top: 1.75rem;
+      font-size: 0.7rem;
+      color: var(--text-soft);
+      display: flex;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
