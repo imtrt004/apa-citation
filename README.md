@@ -1,6 +1,3 @@
-Here is a **polished, professional, GitHub-ready `README.md`** for your APA Reference Generator project.
-It highlights your features, tech stack, screenshots sections, deployment instructions, and API workflow — all written to feel modern and premium.
-
 ---
 
 # 📚 APA 7th Edition Reference Generator
