@@ -857,188 +857,480 @@
     </footer>
   </main>
 
-  <script>
-    // ========================
-    // Semantic Scholar proxy
-    // ========================
-    const S2_PROXY_URL =
-      "https://s2-proxy.tusar-gads.workers.dev/api/s2-search";
+<script>
+  // ========================
+  // Semantic Scholar proxy
+  // ========================
+  const S2_PROXY_URL =
+    "https://s2-proxy.tusar-gads.workers.dev/api/s2-search";
 
-    // ===============
-    // Helper: trimming
-    // ===============
-    function clean(str) {
-      return (str || "").toString().trim();
+  // ===============
+  // Helper: trimming
+  // ===============
+  function clean(str) {
+    return (str || "").toString().trim();
+  }
+
+  // Detect if the search string is likely a DOI (or DOI URL)
+  function extractDoi(str) {
+    if (!str) return "";
+    const trimmed = str.trim();
+    const doiUrlMatch = trimmed.match(/10\.\S+\/\S+/);
+    if (trimmed.toLowerCase().includes("doi.org/")) {
+      return trimmed.split("doi.org/").pop().trim();
+    }
+    if (/^10\.\S+\/\S+$/i.test(trimmed)) {
+      return trimmed;
+    }
+    return doiUrlMatch ? doiUrlMatch[0] : "";
+  }
+
+  // Convert a title from Title Case to (approximate) sentence case
+  function toSentenceCase(str) {
+    if (!str) return "";
+    let s = str.trim();
+
+    // Keep acronyms / all-caps words as-is by temporarily marking them
+    const tokens = s.split(/\s+/);
+    const marked = tokens.map((w) => {
+      if (w.toUpperCase() === w && w.length > 1) {
+        return `§§${w}§§`; // mark acronyms
+      }
+      return w.toLowerCase();
+    });
+
+    s = marked.join(" ");
+
+    // Capitalize first letter of string
+    s = s.charAt(0).toUpperCase() + s.slice(1);
+
+    // Restore acronyms
+    s = s.replace(/§§(.*?)§§/g, (_, w) => w);
+
+    return s;
+  }
+
+  // =========================================
+  // Manual generator: APA 7th reference line
+  // =========================================
+  function buildManualApaReference() {
+    const type = document.getElementById("source-type").value;
+    const authors = clean(document.getElementById("authors-input").value);
+    const year = clean(document.getElementById("year-input").value);
+    const title = clean(document.getElementById("title-input").value);
+    const container = clean(
+      document.getElementById("container-input").value
+    );
+    const volIssue = clean(document.getElementById("vol-input").value);
+    const pages = clean(document.getElementById("pages-input").value);
+    const publisher = clean(
+      document.getElementById("publisher-input").value
+    );
+    const doiUrl = clean(document.getElementById("doi-input").value);
+
+    const errorBox = document.getElementById("manual-error");
+    errorBox.style.display = "none";
+    errorBox.textContent = "";
+
+    if (!authors || !year || !title) {
+      errorBox.textContent =
+        "At minimum, please fill in author(s), year, and title.";
+      errorBox.style.display = "block";
+      return "";
     }
 
-    // Detect if the search string is likely a DOI (or DOI URL)
-    function extractDoi(str) {
-      if (!str) return "";
-      const trimmed = str.trim();
-      const doiUrlMatch = trimmed.match(/10\.\S+\/\S+/);
-      if (trimmed.toLowerCase().includes("doi.org/")) {
-        return trimmed.split("doi.org/").pop().trim();
+    let ref = "";
+
+    // Author + year
+    ref += authors;
+    ref += year ? ` (${year}). ` : ". ";
+
+    // Title (assumes user already used sentence case)
+    ref += title.endsWith(".") ? `${title} ` : `${title}. `;
+
+    if (type === "journal") {
+      if (container) {
+        ref += `<i>${container}</i>`;
+        if (volIssue) {
+          ref += `, <i>${volIssue}</i>`;
+        }
       }
-      if (/^10\.\S+\/\S+$/i.test(trimmed)) {
-        return trimmed;
+      if (pages) {
+        ref += container || volIssue ? `, ${pages}` : pages;
       }
-      return doiUrlMatch ? doiUrlMatch[0] : "";
-    }
-
-    // =========================================
-    // Manual generator: APA 7th reference line
-    // =========================================
-    function buildManualApaReference() {
-      const type = document.getElementById("source-type").value;
-      const authors = clean(document.getElementById("authors-input").value);
-      const year = clean(document.getElementById("year-input").value);
-      const title = clean(document.getElementById("title-input").value);
-      const container = clean(
-        document.getElementById("container-input").value
-      );
-      const volIssue = clean(document.getElementById("vol-input").value);
-      const pages = clean(document.getElementById("pages-input").value);
-      const publisher = clean(
-        document.getElementById("publisher-input").value
-      );
-      const doiUrl = clean(document.getElementById("doi-input").value);
-
-      const errorBox = document.getElementById("manual-error");
-      errorBox.style.display = "none";
-      errorBox.textContent = "";
-
-      if (!authors || !year || !title) {
-        errorBox.textContent =
-          "At minimum, please fill in author(s), year, and title.";
-        errorBox.style.display = "block";
-        return "";
-      }
-
-      let ref = "";
-
-      // Author + year
-      ref += authors;
-      ref += year ? ` (${year}). ` : ". ";
-
-      // Title (assumes user has typed sentence case)
-      ref += title.endsWith(".") ? `${title} ` : `${title}. `;
-
-      // Content-type specific rules
-      if (type === "journal") {
-        if (container) {
-          ref += `<i>${container}</i>`;
-          if (volIssue) {
-            ref += `, <i>${volIssue}</i>`;
-          }
-        }
-        if (pages) {
-          ref += container || volIssue ? `, ${pages}` : pages;
-        }
-        if (doiUrl) {
-          ref += `. ${doiUrl}`;
-        } else {
-          ref += ".";
-        }
-      } else if (type === "book") {
-        if (container) {
-          ref += `<i>${container}</i>`;
-          if (volIssue) {
-            ref += ` (${volIssue})`;
-          }
-          ref += ". ";
-        }
-        if (publisher) {
-          ref += `${publisher}`;
-        }
-        if (doiUrl) {
-          ref += `. ${doiUrl}`;
-        } else {
-          ref += ".";
-        }
-      } else if (type === "chapter") {
-        if (container) {
-          ref += `In ${container}`;
-        }
-        if (pages) {
-          ref += container ? ` (pp. ${pages}). ` : ` (pp. ${pages}). `;
-        } else if (container) {
-          ref += ". ";
-        }
-        if (publisher) {
-          ref += publisher;
-        }
-        if (doiUrl) {
-          ref += `. ${doiUrl}`;
-        } else {
-          ref += ".";
-        }
-      } else if (type === "webpage") {
-        if (container) {
-          ref += `${container}. `;
-        }
-        if (publisher) {
-          ref += `${publisher}. `;
-        }
-        if (doiUrl) {
-          ref += doiUrl;
-        } else {
-          ref = ref.trimEnd();
-        }
+      if (doiUrl) {
+        ref += `. ${doiUrl}`;
       } else {
-        // generic / fallback
-        if (container) {
-          ref += `${container}`;
-          if (volIssue) {
-            ref += `, ${volIssue}`;
-          }
+        ref += ".";
+      }
+    } else if (type === "book") {
+      if (container) {
+        ref += `<i>${container}</i>`;
+        if (volIssue) {
+          ref += ` (${volIssue})`;
         }
-        if (pages) {
-          ref += container || volIssue ? `, ${pages}` : pages;
-        }
-        if (publisher) {
-          ref += container || pages ? `. ${publisher}` : publisher;
-        }
-        if (doiUrl) {
-          ref += `. ${doiUrl}`;
-        } else {
-          ref += ".";
+        ref += ". ";
+      }
+      if (publisher) {
+        ref += `${publisher}`;
+      }
+      if (doiUrl) {
+        ref += `. ${doiUrl}`;
+      } else {
+        ref += ".";
+      }
+    } else if (type === "chapter") {
+      if (container) {
+        ref += `In ${container}`;
+      }
+      if (pages) {
+        ref += container ? ` (pp. ${pages}). ` : ` (pp. ${pages}). `;
+      } else if (container) {
+        ref += ". ";
+      }
+      if (publisher) {
+        ref += publisher;
+      }
+      if (doiUrl) {
+        ref += `. ${doiUrl}`;
+      } else {
+        ref += ".";
+      }
+    } else if (type === "webpage") {
+      if (container) {
+        ref += `${container}. `;
+      }
+      if (publisher) {
+        ref += `${publisher}. `;
+      }
+      if (doiUrl) {
+        ref += doiUrl;
+      } else {
+        ref = ref.trimEnd();
+      }
+    } else {
+      if (container) {
+        ref += `${container}`;
+        if (volIssue) {
+          ref += `, ${volIssue}`;
         }
       }
-
-      // Fix accidental multiple periods before DOI/URL
-      ref = ref.replace(/\.\s+(https?:\/\/)/, " $1");
-
-      return ref.trim();
-    }
-
-    function renderManualCitation(text) {
-      const box = document.getElementById("manual-citation");
-      const copyBtn = document.getElementById("copy-btn");
-      if (!text) {
-        box.classList.add("empty");
-        box.innerHTML = "Your formatted reference will appear here.";
-        copyBtn.disabled = true;
-        return;
+      if (pages) {
+        ref += container || volIssue ? `, ${pages}` : pages;
       }
-      box.classList.remove("empty");
-      box.innerHTML = `<span class="citation-line">${text}</span>`;
-      copyBtn.disabled = false;
+      if (publisher) {
+        ref += container || pages ? `. ${publisher}` : publisher;
+      }
+      if (doiUrl) {
+        ref += `. ${doiUrl}`;
+      } else {
+        ref += ".";
+      }
     }
 
-    document
-      .getElementById("generate-btn")
-      .addEventListener("click", function () {
-        const ref = buildManualApaReference();
-        renderManualCitation(ref);
+    // Fix accidental multiple periods before DOI/URL
+    ref = ref.replace(/\.\s+(https?:\/\/)/, " $1");
+
+    return ref.trim();
+  }
+
+  function renderManualCitation(text) {
+    const box = document.getElementById("manual-citation");
+    const copyBtn = document.getElementById("copy-btn");
+    if (!text) {
+      box.classList.add("empty");
+      box.innerHTML = "Your formatted reference will appear here.";
+      copyBtn.disabled = true;
+      return;
+    }
+    box.classList.remove("empty");
+    box.innerHTML = `<span class="citation-line">${text}</span>`;
+    copyBtn.disabled = false;
+  }
+
+  document
+    .getElementById("generate-btn")
+    .addEventListener("click", function () {
+      const ref = buildManualApaReference();
+      renderManualCitation(ref);
+    });
+
+  document.getElementById("copy-btn").addEventListener("click", async () => {
+    const box = document.getElementById("manual-citation");
+    if (box.classList.contains("empty")) return;
+    const text = box.innerText || box.textContent;
+    try {
+      await navigator.clipboard.writeText(text);
+      const btn = document.getElementById("copy-btn");
+      const old = btn.textContent;
+      btn.textContent = "Copied!";
+      setTimeout(() => (btn.textContent = old), 1200);
+    } catch (e) {
+      alert("Could not access clipboard. Please copy manually.");
+    }
+  });
+
+  // ============================================
+  // Semantic Scholar: APA conversion
+  // ============================================
+  function toApaAuthorName(fullName) {
+    // Basic "First M. Last" -> "Last, F. M."
+    if (!fullName) return "";
+    const parts = fullName.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0];
+    const last = parts[parts.length - 1];
+    const initials = parts
+      .slice(0, -1)
+      .map((p) => (p[0] ? p[0].toUpperCase() + "." : ""))
+      .join(" ");
+    return `${last}, ${initials}`.trim();
+  }
+
+  function formatAuthorsFromS2(authors) {
+    if (!Array.isArray(authors) || authors.length === 0) return "";
+    const formatted = authors.map((a) => toApaAuthorName(a.name));
+    if (formatted.length === 1) return formatted[0];
+    if (formatted.length === 2) {
+      return `${formatted[0]}, & ${formatted[1]}`;
+    }
+    if (formatted.length <= 20) {
+      const allButLast = formatted.slice(0, -1).join(", ");
+      const last = formatted[formatted.length - 1];
+      return `${allButLast}, & ${last}`;
+    }
+    // 21+ authors: first 19, …, last (APA 7)
+    const first19 = formatted.slice(0, 19).join(", ");
+    const last = formatted[formatted.length - 1];
+    return `${first19}, …, ${last}`;
+  }
+
+  function apaReferenceFromPaper(paper) {
+    const authors = formatAuthorsFromS2(paper.authors || []);
+    const year = paper.year || "n.d.";
+    const titleRaw = paper.title || "";
+    const title = toSentenceCase(titleRaw);
+
+    // Journal info from paper.journal, falling back to venue
+    const journalObj = paper.journal || {};
+    const journalName =
+      journalObj.name || paper.venue || journalObj.journalName || "";
+    const volume = journalObj.volume || "";
+    const issue = journalObj.issue || "";
+    const pages = journalObj.pages || "";
+
+    // DOI from externalIds
+    const rawDoi =
+      paper.externalIds &&
+      (paper.externalIds.DOI ||
+        paper.externalIds.Doi ||
+        paper.externalIds.doi);
+
+    const doi = rawDoi
+      ? `https://doi.org/${String(rawDoi).replace(
+          /^https?:\/\/doi.org\//i,
+          ""
+        )}`
+      : "";
+
+    const url = paper.url || "";
+
+    let ref = "";
+
+    if (authors) {
+      ref += authors;
+    }
+    ref += ` (${year}). `;
+
+    if (title) {
+      ref += title.endsWith(".") ? `${title} ` : `${title}. `;
+    }
+
+    if (journalName) {
+      ref += `<i>${journalName}</i>`;
+      if (volume) {
+        ref += `, <i>${volume}`;
+        if (issue) {
+          ref += `(${issue})`;
+        }
+        ref += `</i>`;
+      }
+      if (pages) {
+        ref += `, ${pages}`;
+      }
+    }
+
+    if (doi) {
+      ref += `. ${doi}`;
+    } else if (url) {
+      ref += `. ${url}`;
+    } else {
+      ref += ".";
+    }
+
+    // Avoid " . https://..."
+    ref = ref.replace(/\.\s+(https?:\/\/)/, " $1`);
+
+    return ref.trim();
+  }
+
+  function renderS2Results(list) {
+    const container = document.getElementById("s2-results");
+    container.innerHTML = "";
+    if (!list || list.length === 0) {
+      container.innerHTML =
+        '<span class="guide-text">No results. Try different keywords or fewer filters.</span>';
+      return;
+    }
+
+    list.forEach((paper) => {
+      const div = document.createElement("div");
+      div.className = "paper";
+
+      const authorsShort = (paper.authors || [])
+        .slice(0, 3)
+        .map((a) => a.name)
+        .join(", ");
+      const extraAuthors =
+        (paper.authors || []).length > 3 ? ", et al." : "";
+
+      const jName =
+        (paper.journal && paper.journal.name) || paper.venue || "";
+
+      div.innerHTML = `
+        <div class="paper-header">
+          <div>
+            <div class="paper-title">${paper.title || "Untitled"}</div>
+            <div class="paper-meta">
+              ${paper.year || "n.d."}${
+        jName ? " · " + jName : ""
+      }<br/>
+              ${authorsShort || "Unknown authors"}${extraAuthors}
+            </div>
+          </div>
+          <div class="paper-actions">
+            <button class="btn secondary btn-small">
+              APA reference
+            </button>
+            ${
+              paper.url
+                ? `<a href="${paper.url}" class="paper-link" target="_blank" rel="noopener noreferrer">View on Semantic Scholar</a>`
+                : ""
+            }
+          </div>
+        </div>
+      `;
+
+      const btn = div.querySelector("button");
+      btn.addEventListener("click", () => {
+        const ref = apaReferenceFromPaper(paper);
+        const box = document.getElementById("s2-citation");
+        const copyBtn = document.getElementById("s2-copy-btn");
+        box.classList.remove("empty");
+        box.innerHTML = `<span class="citation-line">${ref}</span>`;
+        copyBtn.disabled = false;
       });
 
-    document.getElementById("copy-btn").addEventListener("click", async () => {
-      const box = document.getElementById("manual-citation");
+      container.appendChild(div);
+    });
+  }
+
+  async function searchSemanticScholar() {
+    const queryInput = document.getElementById("s2-query");
+    const query = clean(queryInput.value);
+    const status = document.getElementById("s2-status");
+    const errorBox = document.getElementById("s2-error");
+    const btn = document.getElementById("s2-search-btn");
+    const copyBtn = document.getElementById("s2-copy-btn");
+
+    errorBox.style.display = "none";
+    errorBox.textContent = "";
+    copyBtn.disabled = true;
+
+    if (!query) {
+      errorBox.textContent = "Type a keyword, title, author, or DOI first.";
+      errorBox.style.display = "block";
+      return;
+    }
+
+    const doi = extractDoi(query);
+    const isDoiLookup = !!doi;
+
+    status.textContent = isDoiLookup
+      ? "Fetching paper metadata by DOI…"
+      : "Searching via Semantic Scholar proxy…";
+    btn.disabled = true;
+
+    try {
+      const url = isDoiLookup
+        ? `${S2_PROXY_URL}?doi=${encodeURIComponent(doi)}`
+        : `${S2_PROXY_URL}?q=${encodeURIComponent(query)}`;
+
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Proxy error (${response.status}): ${text}`);
+      }
+
+      const data = await response.json();
+
+      if (isDoiLookup) {
+        const paper = data.data || data.paper || data;
+        if (!paper || !paper.title) {
+          status.textContent = "No paper found for that DOI.";
+          renderS2Results([]);
+          return;
+        }
+        renderS2Results([paper]);
+
+        const ref = apaReferenceFromPaper(paper);
+        const box = document.getElementById("s2-citation");
+        box.classList.remove("empty");
+        box.innerHTML = `<span class="citation-line">${ref}</span>`;
+        copyBtn.disabled = false;
+
+        status.textContent =
+          "DOI matched. Reference generated using Semantic Scholar metadata.";
+      } else {
+        const results = data.data || data.papers || data.results || [];
+        renderS2Results(results);
+        status.textContent =
+          results.length > 0
+            ? `Showing ${results.length} results from Semantic Scholar.`
+            : "No results found.";
+      }
+    } catch (err) {
+      console.error(err);
+      errorBox.textContent =
+        "Could not fetch data from Semantic Scholar. Check the proxy URL and API key configuration.";
+      errorBox.style.display = "block";
+      status.textContent = "";
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  document
+    .getElementById("s2-search-btn")
+    .addEventListener("click", searchSemanticScholar);
+
+  document.getElementById("s2-query").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      searchSemanticScholar();
+    }
+  });
+
+  // Copy button for Semantic Scholar citation
+  document
+    .getElementById("s2-copy-btn")
+    .addEventListener("click", async () => {
+      const box = document.getElementById("s2-citation");
       if (box.classList.contains("empty")) return;
       const text = box.innerText || box.textContent;
       try {
         await navigator.clipboard.writeText(text);
-        const btn = document.getElementById("copy-btn");
+        const btn = document.getElementById("s2-copy-btn");
         const old = btn.textContent;
         btn.textContent = "Copied!";
         setTimeout(() => (btn.textContent = old), 1200);
@@ -1046,285 +1338,7 @@
         alert("Could not access clipboard. Please copy manually.");
       }
     });
+</script>
 
-    // ============================================
-    // Semantic Scholar: APA conversion
-    // ============================================
-    function toApaAuthorName(fullName) {
-      // Basic "First M. Last" -> "Last, F. M."
-      if (!fullName) return "";
-      const parts = fullName.trim().split(/\s+/);
-      if (parts.length === 1) return parts[0];
-      const last = parts[parts.length - 1];
-      const initials = parts
-        .slice(0, -1)
-        .map((p) => (p[0] ? p[0].toUpperCase() + "." : ""))
-        .join(" ");
-      return `${last}, ${initials}`.trim();
-    }
-
-    function formatAuthorsFromS2(authors) {
-      if (!Array.isArray(authors) || authors.length === 0) return "";
-      const formatted = authors.map((a) => toApaAuthorName(a.name));
-      if (formatted.length === 1) return formatted[0];
-      if (formatted.length === 2) {
-        return `${formatted[0]}, & ${formatted[1]}`;
-      }
-      if (formatted.length <= 20) {
-        const allButLast = formatted.slice(0, -1).join(", ");
-        const last = formatted[formatted.length - 1];
-        return `${allButLast}, & ${last}`;
-      }
-      // 21+ authors: first 19, …, last (APA 7 rule)
-      const first19 = formatted.slice(0, 19).join(", ");
-      const last = formatted[formatted.length - 1];
-      return `${first19}, …, ${last}`;
-    }
-
-    function apaReferenceFromPaper(paper) {
-      const authors = formatAuthorsFromS2(paper.authors || []);
-      const year = paper.year || "n.d.";
-      const title = paper.title || "";
-
-      // Journal info: try several possible shapes
-      const journalObj = paper.journal || {};
-      const journalName =
-        journalObj.name || paper.venue || journalObj.journalName || "";
-      const volume =
-        journalObj.volume || paper.volume || journalObj.volumeNumber || "";
-      const issue =
-        journalObj.issue || paper.issue || journalObj.issueNumber || "";
-      const firstPage =
-        paper.firstPage || journalObj.firstPage || (paper.pages && paper.pages.split("-")[0]);
-      const lastPage =
-        paper.lastPage || journalObj.lastPage || (paper.pages && paper.pages.split("-")[1]);
-      let pages = paper.pages || journalObj.pages || "";
-      if (!pages && firstPage && lastPage) {
-        pages = `${firstPage}-${lastPage}`;
-      }
-
-      // DOI is inside externalIds
-      const rawDoi =
-        paper.externalIds &&
-        (paper.externalIds.DOI ||
-          paper.externalIds.Doi ||
-          paper.externalIds.doi);
-
-      const doi = rawDoi
-        ? `https://doi.org/${String(rawDoi).replace(
-            /^https?:\/\/doi.org\//i,
-            ""
-          )}`
-        : "";
-
-      const url = paper.url || "";
-
-      let ref = "";
-
-      if (authors) {
-        ref += authors;
-      }
-      ref += ` (${year}). `;
-
-      if (title) {
-        ref += title.endsWith(".") ? `${title} ` : `${title}. `;
-      }
-
-      if (journalName) {
-        ref += `<i>${journalName}</i>`;
-        if (volume) {
-          ref += `, <i>${volume}`;
-          if (issue) {
-            ref += `(${issue})`;
-          }
-          ref += `</i>`;
-        }
-        if (pages) {
-          ref += `, ${pages}`;
-        }
-      }
-
-      if (doi) {
-        ref += `. ${doi}`;
-      } else if (url) {
-        ref += `. ${url}`;
-      } else {
-        ref += ".";
-      }
-
-      // Avoid " . https://..."
-      ref = ref.replace(/\.\s+(https?:\/\/)/, " $1");
-
-      return ref.trim();
-    }
-
-    function renderS2Results(list) {
-      const container = document.getElementById("s2-results");
-      container.innerHTML = "";
-      if (!list || list.length === 0) {
-        container.innerHTML =
-          '<span class="guide-text">No results. Try different keywords or fewer filters.</span>';
-        return;
-      }
-
-      list.forEach((paper) => {
-        const div = document.createElement("div");
-        div.className = "paper";
-
-        const authorsShort = (paper.authors || [])
-          .slice(0, 3)
-          .map((a) => a.name)
-          .join(", ");
-        const extraAuthors =
-          (paper.authors || []).length > 3 ? ", et al." : "";
-
-        div.innerHTML = `
-          <div class="paper-header">
-            <div>
-              <div class="paper-title">${paper.title || "Untitled"}</div>
-              <div class="paper-meta">
-                ${paper.year || "n.d."}${
-          (paper.journal && paper.journal.name) || paper.venue
-            ? " · " +
-              ((paper.journal && paper.journal.name) || paper.venue)
-            : ""
-        }<br/>
-                ${authorsShort || "Unknown authors"}${extraAuthors}
-              </div>
-            </div>
-            <div class="paper-actions">
-              <button class="btn secondary btn-small">
-                APA reference
-              </button>
-              ${
-                paper.url
-                  ? `<a href="${paper.url}" class="paper-link" target="_blank" rel="noopener noreferrer">View on Semantic Scholar</a>`
-                  : ""
-              }
-            </div>
-          </div>
-        `;
-
-        const btn = div.querySelector("button");
-        btn.addEventListener("click", () => {
-          const ref = apaReferenceFromPaper(paper);
-          const box = document.getElementById("s2-citation");
-          const copyBtn = document.getElementById("s2-copy-btn");
-          box.classList.remove("empty");
-          box.innerHTML = `<span class="citation-line">${ref}</span>`;
-          copyBtn.disabled = false;
-        });
-
-        container.appendChild(div);
-      });
-    }
-
-    async function searchSemanticScholar() {
-      const queryInput = document.getElementById("s2-query");
-      const query = clean(queryInput.value);
-      const status = document.getElementById("s2-status");
-      const errorBox = document.getElementById("s2-error");
-      const btn = document.getElementById("s2-search-btn");
-      const copyBtn = document.getElementById("s2-copy-btn");
-
-      errorBox.style.display = "none";
-      errorBox.textContent = "";
-      copyBtn.disabled = true;
-
-      if (!query) {
-        errorBox.textContent = "Type a keyword, title, author, or DOI first.";
-        errorBox.style.display = "block";
-        return;
-      }
-
-      const doi = extractDoi(query);
-      const isDoiLookup = !!doi;
-
-      status.textContent = isDoiLookup
-        ? "Fetching paper metadata by DOI…"
-        : "Searching via Semantic Scholar proxy…";
-      btn.disabled = true;
-
-      try {
-        const url = isDoiLookup
-          ? `${S2_PROXY_URL}?doi=${encodeURIComponent(doi)}`
-          : `${S2_PROXY_URL}?q=${encodeURIComponent(query)}`;
-
-        const response = await fetch(url);
-
-        if (!response.ok) {
-          const text = await response.text();
-          throw new Error(`Proxy error (${response.status}): ${text}`);
-        }
-
-        const data = await response.json();
-
-        if (isDoiLookup) {
-          // Expect a single paper object
-          const paper = data.data || data.paper || data;
-          if (!paper || !paper.title) {
-            status.textContent = "No paper found for that DOI.";
-            renderS2Results([]);
-            return;
-          }
-          renderS2Results([paper]);
-
-          // Auto-generate citation for DOI fetch
-          const ref = apaReferenceFromPaper(paper);
-          const box = document.getElementById("s2-citation");
-          box.classList.remove("empty");
-          box.innerHTML = `<span class="citation-line">${ref}</span>`;
-          copyBtn.disabled = false;
-
-          status.textContent =
-            "DOI matched. Reference generated using Semantic Scholar metadata.";
-        } else {
-          const results = data.data || data.papers || data.results || [];
-          renderS2Results(results);
-          status.textContent =
-            results.length > 0
-              ? `Showing ${results.length} results from Semantic Scholar.`
-              : "No results found.";
-        }
-      } catch (err) {
-        console.error(err);
-        errorBox.textContent =
-          "Could not fetch data from Semantic Scholar. Check the proxy URL and API key configuration.";
-        errorBox.style.display = "block";
-        status.textContent = "";
-      } finally {
-        btn.disabled = false;
-      }
-    }
-
-    document
-      .getElementById("s2-search-btn")
-      .addEventListener("click", searchSemanticScholar);
-
-    document.getElementById("s2-query").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        searchSemanticScholar();
-      }
-    });
-
-    // Copy button for Semantic Scholar citation
-    document
-      .getElementById("s2-copy-btn")
-      .addEventListener("click", async () => {
-        const box = document.getElementById("s2-citation");
-        if (box.classList.contains("empty")) return;
-        const text = box.innerText || box.textContent;
-        try {
-          await navigator.clipboard.writeText(text);
-          const btn = document.getElementById("s2-copy-btn");
-          const old = btn.textContent;
-          btn.textContent = "Copied!";
-          setTimeout(() => (btn.textContent = old), 1200);
-        } catch (e) {
-          alert("Could not access clipboard. Please copy manually.");
-        }
-      });
-  </script>
 </body>
 </html>
