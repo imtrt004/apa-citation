@@ -661,3 +661,79 @@ body {
   box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.55);
 }
 
+/* ============================================================
+   LIGHT THEME FIXES: INPUT FOCUS + RESULTS LIST
+   ============================================================ */
+
+/* Ensure focused inputs look light when in light theme */
+.input:focus {
+  background: var(--color-input-bg);
+  border-color: var(--color-accent);
+  outline: none;
+  box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.5);
+}
+
+/* Results container for Semantic Scholar + Crossref */
+.results {
+  border-radius: 1rem;
+  border: 1px solid var(--color-border);
+  background: rgba(15, 23, 42, 0.7);
+  padding: 0.75rem;
+  margin-top: 1rem;
+  max-height: 280px;
+  overflow: auto;
+}
+
+:root[data-theme="light"] .results {
+  background: #ffffff;
+  border-color: #e4e4e7;
+}
+
+/* Individual paper entries */
+.paper {
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 0.75rem;
+  padding: 0.75rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+  transition:
+    background 0.25s ease,
+    transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+
+.paper:last-child {
+  margin-bottom: 0;
+}
+
+.paper:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.7);
+}
+
+:root[data-theme="light"] .paper {
+  background: #f9fafb;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+:root[data-theme="light"] .paper:hover {
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+}
+
+/* Paper text colors in light theme */
+:root[data-theme="light"] .paper-title {
+  color: #111827;
+}
+
+:root[data-theme="light"] .paper-meta {
+  color: #6b7280;
+}
+
+/* Make citation output background match theme (already partially done, reinforcing) */
+:root[data-theme="light"] .citation-output {
+  background: #f9fafb;
+  border-color: #e4e4e7;
+}
+
