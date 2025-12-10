@@ -1408,12 +1408,16 @@ async function searchSemanticScholar() {
       throw new Error(JSON.stringify(data));
     }
 
-    if (isDoiLookup) {
-      generateS2Citation(data);
-      renderS2Results([data]);
-      status.textContent = "Merged reference generated.";
-      return;
-    }
+if (isDoiLookup) {
+  const resp = await fetch(`${S2_PROXY_URL}?doi=${encodeURIComponent(doi)}`);
+  const data = await resp.json();
+  if (!resp.ok) throw new Error(JSON.stringify(data));
+
+  generateS2Citation(data);
+  renderS2Results([data]);
+  status.textContent = "Merged reference generated.";
+  return;
+}
 
     const results = data.data || data.results || [];
     renderS2Results(results);
