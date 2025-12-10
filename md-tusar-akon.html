@@ -2,6 +2,25 @@
 <html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
+    <script>
+  (function () {
+    try {
+      const stored = localStorage.getItem("apa-7th-theme");
+      if (stored === "light" || stored === "dark") {
+        document.documentElement.setAttribute("data-theme", stored);
+      } else {
+        // auto-detect system preference
+        const prefersLight = window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: light)").matches;
+        document.documentElement.setAttribute("data-theme", prefersLight ? "light" : "dark");
+      }
+    } catch (e) {
+      // fallback: dark mode
+      document.documentElement.setAttribute("data-theme", "dark");
+    }
+  })();
+</script>
+
     <title>About Md. Tusar Akon – Smart APA References</title>
     <meta
       name="description"
@@ -72,8 +91,7 @@
         <div class="about-hero-row">
           <div class="about-hero-text">
             <h1>
-              Smart <span class="highlight">APA References</span><br />
-              for your papers
+              Smart <span class="highlight">APA References</span> for your papers
             </h1>
             <p class="subtitle">
   Hi, I’m <strong>Md. Tusar Akon</strong> – a textile engineer, educator,
@@ -144,7 +162,7 @@
                 I created <strong>GRElts.com</strong>, an all-in-one GRE preparation
                 platform that blends real exam-style questions, analytics, and a
                 game-like coin system so students can practice more consistently and
-                see exactly where they’re improving. :contentReference[oaicite:1]{index=1}
+                see exactly where they’re improving.
               </p>
               <p>
                 GRElts grew out of a simple idea: students don’t just need more
@@ -182,7 +200,7 @@
                 sustainable dyeing, conductive textiles, and process optimization.
                 That means I spend a lot of time thinking about how tiny details
                 add up to large-scale impact – in factories, in classrooms, and in
-                the tools we use every day. :contentReference[oaicite:2]{index=2}
+                the tools we use every day.
               </p>
               <p>
                 I try to bring the same mindset here: build small, precise systems
@@ -218,7 +236,7 @@
                 Outside of this site, I continue to experiment with tools like
                 GRElts, research on <strong>conductive textiles</strong>, and
                 digital products that bridge the gap between traditional disciplines
-                and modern AI-driven workflows. :contentReference[oaicite:3]{index=3}
+                and modern AI-driven workflows.
               </p>
               <p>
                 If you’re curious about collaborations, research, or just want to
@@ -236,12 +254,6 @@
   <li>
     Email (GRElts / projects):
     <a href="mailto:help@grelts.com">help@grelts.com</a>
-  </li>
-  <li>
-    Email (personal / academic):
-    <a href="mailto:mdtusar.akon@colostate.edu"
-      >mdtusar.akon@colostate.edu</a
-    >
   </li>
   <li>
     LinkedIn:
