@@ -2,24 +2,26 @@
 <html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <script>
+<script>
   (function () {
     try {
       const stored = localStorage.getItem("apa-7th-theme");
       if (stored === "light" || stored === "dark") {
         document.documentElement.setAttribute("data-theme", stored);
       } else {
-        // auto-detect system preference
         const prefersLight = window.matchMedia &&
           window.matchMedia("(prefers-color-scheme: light)").matches;
-        document.documentElement.setAttribute("data-theme", prefersLight ? "light" : "dark");
+        document.documentElement.setAttribute(
+          "data-theme",
+          prefersLight ? "light" : "dark"
+        );
       }
     } catch (e) {
-      // fallback: dark mode
       document.documentElement.setAttribute("data-theme", "dark");
     }
   })();
 </script>
+
 
     <title>About Md. Tusar Akon – Smart APA References</title>
     <meta
@@ -404,12 +406,5 @@
         }
       }
     </style>
-    <script src="app.js"></script>
-<script>
-  // footer year etc…
-  document.getElementById("about-year").textContent =
-    new Date().getFullYear();
-</script>
-
   </body>
 </html>
