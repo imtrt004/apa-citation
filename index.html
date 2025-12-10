@@ -2,476 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>APA 7th Reference Generator + Semantic Scholar</title>
+  <title>APA 7th Reference Generator</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root {
-      --bg: #020617;
-      --bg-soft: #020617;
-      --card: rgba(15, 23, 42, 0.95);
-      --card-soft: rgba(15, 23, 42, 0.9);
-      --accent: #38bdf8;
-      --accent-soft: rgba(56, 189, 248, 0.2);
-      --border-subtle: rgba(148, 163, 184, 0.3);
-      --text-main: #e5e7eb;
-      --text-muted: #9ca3af;
-      --text-soft: #6b7280;
-      --error: #f97373;
-      --shadow-soft: 0 24px 80px rgba(15, 23, 42, 0.75);
-      --radius-lg: 1.5rem;
-      --radius-md: 0.9rem;
-      --radius-sm: 0.6rem;
-    }
 
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-        "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at top left, #0f172a, #020617 55%),
-        radial-gradient(circle at bottom right, #0b1120, #020617 65%);
-      color: var(--text-main);
-      display: flex;
-      justify-content: center;
-      padding: 2rem 1rem 3rem;
-    }
-
-    .page {
-      width: 100%;
-      max-width: 1120px;
-      margin: auto;
-    }
-
-    .header {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      margin-bottom: 1.75rem;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      padding: 0.25rem 0.75rem;
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      background: rgba(15, 23, 42, 0.6);
-      color: var(--text-soft);
-      backdrop-filter: blur(10px);
-      width: fit-content;
-    }
-
-    .badge-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 0 4px var(--accent-soft);
-    }
-
-    h1 {
-      font-size: clamp(1.8rem, 3vw, 2.3rem);
-      margin: 0;
-      letter-spacing: -0.03em;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    h1 span.highlight {
-      color: var(--accent);
-    }
-
-    .subtitle {
-      margin: 0.25rem 0 0;
-      color: var(--text-muted);
-      font-size: 0.9rem;
-      max-width: 34rem;
-      line-height: 1.4;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: minmax(0, 3fr) minmax(0, 2.4fr);
-      gap: 1.5rem;
-    }
-
-    @media (max-width: 880px) {
-      .grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-    }
-
-    .card {
-      background: var(--card);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-soft);
-      border: 1px solid rgba(148, 163, 184, 0.22);
-      padding: 1.4rem 1.5rem 1.6rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at top right,
-        rgba(56, 189, 248, 0.12),
-        transparent 55%);
-      opacity: 0.9;
-      pointer-events: none;
-    }
-
-    .card-inner {
-      position: relative;
-      z-index: 1;
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      gap: 0.75rem;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    .card-title {
-      font-size: 1rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .card-title-pill {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      padding: 0.15rem 0.6rem;
-      border-radius: 999px;
-      border: 1px solid var(--border-subtle);
-      color: var(--text-soft);
-    }
-
-    .card-description {
-      font-size: 0.8rem;
-      color: var(--text-soft);
-      margin-bottom: 0.7rem;
-    }
-
-    label {
-      display: block;
-      font-size: 0.78rem;
-      font-weight: 500;
-      color: var(--text-soft);
-      margin-bottom: 0.25rem;
-    }
-
-    .input-row {
-      display: flex;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      margin-bottom: 0.75rem;
-    }
-
-    .field {
-      flex: 1 1 140px;
-      min-width: 0;
-    }
-
-    .field-full {
-      width: 100%;
-      margin-bottom: 0.75rem;
-    }
-
-    .input, select, textarea {
-      width: 100%;
-      border-radius: var(--radius-sm);
-      border: 1px solid rgba(51, 65, 85, 0.9);
-      background: rgba(15, 23, 42, 0.9);
-      color: var(--text-main);
-      font-size: 0.85rem;
-      padding: 0.6rem 0.75rem;
-      outline: none;
-      transition: border-color 0.16s ease, box-shadow 0.16s ease,
-        background 0.16s ease, transform 0.06s ease;
-    }
-
-    .input::placeholder,
-    textarea::placeholder {
-      color: var(--text-soft);
-    }
-
-    .input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.3);
-      background: rgba(15, 23, 42, 0.98);
-      transform: translateY(-0.5px);
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 80px;
-      max-height: 220px;
-      line-height: 1.4;
-    }
-
-    .hint {
-      margin-top: 0.2rem;
-      font-size: 0.72rem;
-      color: var(--text-soft);
-    }
-
-    .btn-row {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.4rem;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      border-radius: 999px;
-      border: none;
-      padding: 0.55rem 1.1rem;
-      font-size: 0.8rem;
-      font-weight: 500;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: linear-gradient(135deg, #38bdf8, #22c55e);
-      color: #020617;
-      box-shadow: 0 16px 35px rgba(56, 189, 248, 0.28);
-      transition: transform 0.12s ease, box-shadow 0.12s ease,
-        filter 0.12s ease;
-      white-space: nowrap;
-    }
-
-    .btn.secondary {
-      background: rgba(15, 23, 42, 0.9);
-      color: var(--text-main);
-      border: 1px solid var(--border-subtle);
-      box-shadow: none;
-    }
-
-    .btn:disabled {
-      opacity: 0.65;
-      cursor: default;
-      box-shadow: none;
-      transform: none;
-    }
-
-    .btn:not(:disabled):hover {
-      transform: translateY(-1px);
-      filter: brightness(1.05);
-      box-shadow: 0 22px 40px rgba(56, 189, 248, 0.38);
-    }
-
-    .btn-icon {
-      font-size: 1rem;
-    }
-
-    .pill {
-      border-radius: 999px;
-      border: 1px dashed rgba(148, 163, 184, 0.5);
-      padding: 0.25rem 0.6rem;
-      font-size: 0.72rem;
-      color: var(--text-soft);
-    }
-
-    .citation-output {
-      margin-top: 0.8rem;
-      background: var(--bg-soft);
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      padding: 0.85rem 1.1rem;
-      font-family: "Georgia", "Times New Roman", serif;
-      font-size: 0.85rem;
-      line-height: 1.5;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-
-    .citation-output.empty {
-      border-style: dashed;
-      color: var(--text-soft);
-      font-style: italic;
-    }
-
-    .citation-line {
-      display: block;
-      padding-left: 2em;
-      text-indent: -2em;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-    }
-
-    .citation-label {
-      font-size: 0.78rem;
-      color: var(--text-soft);
-      margin-bottom: 0.2rem;
-    }
-
-    .error {
-      font-size: 0.75rem;
-      color: var(--error);
-      margin-top: 0.25rem;
-    }
-
-    /* Semantic Scholar section */
-    .results {
-      margin-top: 0.7rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      max-height: 250px;
-      overflow-y: auto;
-    }
-
-    .paper {
-      border-radius: var(--radius-md);
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      padding: 0.6rem 0.75rem;
-    }
-
-    .paper-header {
-      display: flex;
-      justify-content: space-between;
-      gap: 0.5rem;
-      align-items: flex-start;
-    }
-
-    .paper-title {
-      font-size: 0.86rem;
-      font-weight: 500;
-      margin-bottom: 0.15rem;
-    }
-
-    .paper-meta {
-      font-size: 0.74rem;
-      color: var(--text-soft);
-    }
-
-    .paper-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      align-items: flex-end;
-    }
-
-    .paper-link {
-      font-size: 0.74rem;
-      color: var(--accent);
-      text-decoration: none;
-      opacity: 0.85;
-    }
-
-    .paper-link:hover {
-      opacity: 1;
-      text-decoration: underline;
-    }
-
-    .guide-card {
-      margin-top: 1.5rem;
-      background: var(--card-soft);
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(148, 163, 184, 0.23);
-      padding: 1.3rem 1.5rem 1.4rem;
-    }
-
-    .guide-title {
-      font-size: 0.98rem;
-      font-weight: 600;
-      margin: 0 0 0.35rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .guide-title span {
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-soft);
-    }
-
-    .guide-section-title {
-      font-size: 0.86rem;
-      font-weight: 600;
-      margin: 0.8rem 0 0.25rem;
-    }
-
-    .guide-text {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-      margin: 0.15rem 0;
-    }
-
-    .guide-list {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin: 0.1rem 0 0.15rem 0.9rem;
-      padding-left: 0.4rem;
-    }
-
-    .guide-list li {
-      margin: 0.08rem 0;
-    }
-
-    .guide-note {
-      font-size: 0.72rem;
-      color: var(--text-soft);
-      margin-top: 0.5rem;
-      font-style: italic;
-    }
-
-    code {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-        "Liberation Mono", "Courier New", monospace;
-      font-size: 0.75rem;
-      padding: 0.05rem 0.25rem;
-      border-radius: 0.4rem;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      color: var(--accent);
-    }
-
-    .footer {
-      margin-top: 1.75rem;
-      font-size: 0.7rem;
-      color: var(--text-soft);
-      display: flex;
-      justify-content: space-between;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-    }
-
-    .footer a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    .footer a:hover {
-      text-decoration: underline;
-    }
-  </style>
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
   <main class="page">
     <header class="header">
@@ -479,19 +16,19 @@
         <span class="badge-dot"></span>
         APA 7th • Reference Generator
       </div>
+
       <h1>
-        Smart
-        <span class="highlight">APA References</span>
-        for your papers
+        Smart <span class="highlight">APA References</span> for your papers
       </h1>
+
       <p class="subtitle">
-        Paste your article details or pull them from Semantic Scholar,
-        then copy clean APA 7th edition references with a proper hanging indent.
+        Generate APA 7 references manually or fetch fully authenticated data using 
+        Semantic Scholar + Crossref via your Cloudflare Worker.
       </p>
     </header>
 
     <section class="grid">
-      <!-- Left: Manual APA generator -->
+      <!-- Manual APA Generator -->
       <section class="card">
         <div class="card-inner">
           <div class="card-header">
@@ -500,16 +37,12 @@
                 Manual APA Reference Builder
                 <span class="card-title-pill">Works Cited</span>
               </div>
-              <p class="card-description">
-                Choose a content type, fill in the fields, and generate a
-                formatted APA 7th reference line with hanging indent.
-              </p>
             </div>
-            <div class="pill">APA 7th • Hanging indent • Common types</div>
+            <div class="pill">APA 7th • Hanging Indent</div>
           </div>
 
           <div class="field-full">
-            <label for="source-type">Content type</label>
+            <label>Content Type</label>
             <select id="source-type" class="input">
               <option value="journal">Journal article</option>
               <option value="book">Book</option>
@@ -520,825 +53,101 @@
           </div>
 
           <div class="field-full">
-            <label for="authors-input">Author(s)</label>
-            <input
-              id="authors-input"
-              class="input"
-              type="text"
-              placeholder="Example: Smith, J. A., &amp; Lee, M. K."
-            />
-            <div class="hint">
-              Enter authors already in APA format
-              (<code>Last, F. M.</code>). For 21+ authors, include the first
-              19, an ellipsis, then the final author.
+            <label>Authors</label>
+            <input id="authors-input" class="input" placeholder="Smith, J. A., & Lee, M. K." />
+          </div>
+
+          <div class="input-row">
+            <div class="field">
+              <label>Year</label>
+              <input id="year-input" class="input" placeholder="2023" />
+            </div>
+            <div class="field">
+              <label>Title</label>
+              <input id="title-input" class="input" placeholder="Article title in sentence case" />
             </div>
           </div>
 
           <div class="input-row">
             <div class="field">
-              <label for="year-input">Year</label>
-              <input
-                id="year-input"
-                class="input"
-                type="text"
-                placeholder="2015"
-              />
+              <label>Container (Journal / Book / Website)</label>
+              <input id="container-input" class="input" placeholder="Journal Name" />
             </div>
             <div class="field">
-              <label for="title-input">Title of work</label>
-              <input
-                id="title-input"
-                class="input"
-                type="text"
-                placeholder="Sentence case; first word &amp; proper nouns capitalized"
-              />
+              <label>Volume (and issue)</label>
+              <input id="vol-input" class="input" placeholder="33(30)" />
             </div>
           </div>
 
           <div class="input-row">
             <div class="field">
-              <label for="container-input">
-                Journal / book / site name
-              </label>
-              <input
-                id="container-input"
-                class="input"
-                type="text"
-                placeholder="The Lancet, Journal name, book title, or website"
-              />
+              <label>Pages</label>
+              <input id="pages-input" class="input" placeholder="2059–2068" />
             </div>
             <div class="field">
-              <label for="vol-input">Volume (and issue)</label>
-              <input
-                id="vol-input"
-                class="input"
-                type="text"
-                placeholder="386(10008)"
-              />
-            </div>
-          </div>
-
-          <div class="input-row">
-            <div class="field">
-              <label for="pages-input">Page range</label>
-              <input
-                id="pages-input"
-                class="input"
-                type="text"
-                placeholder="2059–2068"
-              />
-            </div>
-            <div class="field">
-              <label for="publisher-input">
-                Publisher (books / reports)
-              </label>
-              <input
-                id="publisher-input"
-                class="input"
-                type="text"
-                placeholder="Publisher (leave empty for journal articles)"
-              />
+              <label>Publisher (for books)</label>
+              <input id="publisher-input" class="input" />
             </div>
           </div>
 
           <div class="field-full">
-            <label for="doi-input">DOI or URL</label>
-            <input
-              id="doi-input"
-              class="input"
-              type="text"
-              placeholder="https://doi.org/10.1016/S0140-6736(15)00257-3"
-            />
-            <div class="hint">
-              APA 7 uses the URL-style DOI:
-              <code>https://doi.org/10.xxxx/xxxxx</code>. No period after a DOI
-              or URL.
-            </div>
+            <label>DOI or URL</label>
+            <input id="doi-input" class="input" placeholder="https://doi.org/10.xxxx/xxxx" />
           </div>
 
           <div class="btn-row">
-            <button class="btn" id="generate-btn">
-              <span class="btn-icon">✨</span>
-              Generate reference
-            </button>
-            <button class="btn secondary" id="copy-btn" disabled>
-              <span class="btn-icon">📋</span>
-              Copy to clipboard
-            </button>
-            <span class="hint">
-              Output is already formatted for a reference list. Paste into your
-              References page and keep the hanging indent.
-            </span>
+            <button id="generate-btn" class="btn">✨ Generate</button>
+            <button id="copy-btn" class="btn secondary" disabled>📋 Copy</button>
           </div>
 
           <div id="manual-error" class="error" style="display:none;"></div>
 
-          <div style="margin-top:0.8rem;">
-            <div class="citation-label">Generated APA 7th reference</div>
-            <div id="manual-citation" class="citation-output empty">
-              Your formatted reference will appear here.
-            </div>
+          <div class="citation-label">Generated APA Reference</div>
+          <div id="manual-citation" class="citation-output empty">
+            Your formatted APA reference will appear here.
           </div>
         </div>
       </section>
 
-      <!-- Right: Semantic Scholar integration -->
+      <!-- Semantic Scholar + Crossref -->
       <section class="card">
         <div class="card-inner">
           <div class="card-header">
             <div>
               <div class="card-title">
-                Semantic Scholar lookup
-                <span class="card-title-pill">API • Live data</span>
+                Semantic Scholar + Crossref
+                <span class="card-title-pill">DOI • API</span>
               </div>
-              <p class="card-description">
-                Paste a DOI or search by keywords, then click to generate an APA
-                7th reference using Semantic Scholar metadata.
-              </p>
             </div>
-            <div class="pill">
-              Uses Semantic Scholar Academic Graph API
-            </div>
+            <div class="pill">Worker Powered</div>
           </div>
 
           <div class="field-full">
-            <label for="s2-query">Search papers or paste DOI</label>
-            <input
-              id="s2-query"
-              class="input"
-              type="text"
-              placeholder="e.g., https://doi.org/10.1016/S0140-6736(15)00257-3 or servant leadership"
-            />
-            <div class="hint">
-              Paste a DOI for the most accurate citation, or search by title /
-              keywords / author.
-            </div>
+            <label>Search or Paste DOI</label>
+            <input id="s2-query" class="input" placeholder="10.1016/S0140-6736(15)00257-3" />
           </div>
 
           <div class="btn-row">
-            <button class="btn" id="s2-search-btn">
-              <span class="btn-icon">🔎</span>
-              Search Semantic Scholar
-            </button>
+            <button id="s2-search-btn" class="btn">🔎 Search</button>
             <span id="s2-status" class="hint"></span>
           </div>
 
           <div id="s2-error" class="error" style="display:none;"></div>
 
-          <div class="results" id="s2-results"></div>
+          <div id="s2-results" class="results"></div>
 
-          <div style="margin-top:0.8rem;">
-            <div class="citation-label">
-              Last reference generated from Semantic Scholar
-            </div>
-            <div id="s2-citation" class="citation-output empty">
-              Select a paper above (or fetch by DOI) to generate an APA 7th reference line.
-            </div>
-            <div class="btn-row" style="margin-top:0.4rem;">
-              <button class="btn secondary" id="s2-copy-btn" disabled>
-                <span class="btn-icon">📋</span>
-                Copy semantic reference
-              </button>
-              <span class="hint">Copies the formatted reference with hanging indent.</span>
-            </div>
+          <div class="citation-label">Semantic Scholar + Crossref Reference</div>
+          <div id="s2-citation" class="citation-output empty">
+            No reference generated yet.
           </div>
+
+          <button id="s2-copy-btn" class="btn secondary" disabled>📋 Copy</button>
         </div>
       </section>
     </section>
-
-    <!-- APA 7th quick guide (paraphrased) -->
-    <section class="guide-card" id="apa-guide">
-      <h2 class="guide-title">
-        APA 7th Edition Quick Reference
-        <span>Condensed from an APA 7th quick guide</span>
-      </h2>
-      <p class="guide-text">
-        This is a condensed, paraphrased overview of APA 7th rules for student
-        papers. Always check unusual sources or edge cases against your
-        instructor’s directions or the official APA manual.
-      </p>
-
-      <h3 class="guide-section-title">1. Core APA style resources</h3>
-      <p class="guide-text">
-        APA 7th rules are mainly documented in:
-      </p>
-      <ul class="guide-list">
-        <li>
-          <em>Concise Guide to APA Style (7th ed.)</em> – aimed at undergraduate papers.
-        </li>
-        <li>
-          <em>Publication Manual of the American Psychological Association
-          (7th ed.)</em> – full reference manual (ideal for graduate work).
-        </li>
-      </ul>
-      <p class="guide-text">
-        The official APA Style website and blog provide examples and guidance for
-        newer formats like social media, podcasts, videos, and more.
-      </p>
-
-      <h3 class="guide-section-title">2. Title page (student papers)</h3>
-      <p class="guide-text">
-        Unless told otherwise, a typical student title page includes:
-      </p>
-      <ul class="guide-list">
-        <li>Paper title (bold, title case, about halfway down)</li>
-        <li>Your name (first name, middle initial, last name)</li>
-        <li>Institution name</li>
-        <li>Course code and course title</li>
-        <li>Instructor’s name</li>
-        <li>Assignment due date</li>
-        <li>Page number “1” in the upper-right header</li>
-      </ul>
-
-      <h3 class="guide-section-title">3. First text page</h3>
-      <p class="guide-text">
-        The next page usually starts your main text:
-      </p>
-      <ul class="guide-list">
-        <li>Repeat the paper title at the top, centered and bold.</li>
-        <li>Start your introduction directly under the title (no “Introduction” heading).</li>
-        <li>Use double spacing, 1-inch margins, and a readable font (e.g., 11-pt Calibri or 12-pt Times New Roman).</li>
-      </ul>
-
-      <h3 class="guide-section-title">4. Reference page basics</h3>
-      <p class="guide-text">
-        The References list goes on its own page at the end:
-      </p>
-      <ul class="guide-list">
-        <li>Heading: <strong>References</strong> (bold, centered).</li>
-        <li>Entries are double-spaced with no extra blank lines.</li>
-        <li>Order entries alphabetically by the first author’s last name.</li>
-        <li>
-          Use a <strong>hanging indent</strong> of 0.5 inch (first line at the margin, others indented).
-        </li>
-        <li>Don’t add a period after a DOI or URL.</li>
-      </ul>
-
-      <h3 class="guide-section-title">5. “Who, when, what, where” elements</h3>
-      <p class="guide-text">
-        Most reference entries follow four questions:
-      </p>
-      <ul class="guide-list">
-        <li><strong>Who</strong> created the work? (author or organization)</li>
-        <li><strong>When</strong> was it published? (year or full date)</li>
-        <li><strong>What</strong> is the work called? (title in sentence case)</li>
-        <li><strong>Where</strong> can readers find it? (journal/book info, publisher, DOI or URL)</li>
-      </ul>
-
-      <h3 class="guide-section-title">6. In-text citations</h3>
-      <p class="guide-text">
-        APA uses two main in-text formats:
-      </p>
-      <ul class="guide-list">
-        <li>
-          <strong>Parenthetical:</strong> everything in parentheses.  
-          Example: <code>(Author, 2015)</code> or <code>(Author, 2015, p. 23)</code>.
-        </li>
-        <li>
-          <strong>Narrative:</strong> author in the sentence, year (and page) in parentheses.  
-          Example: <code>Author (2015)</code> or <code>Author (2015, p. 23)</code>.
-        </li>
-      </ul>
-      <p class="guide-text">
-        For specific sections, add page / paragraph / table / figure numbers after the year.
-      </p>
-
-      <h3 class="guide-section-title">7. DOIs and URLs</h3>
-      <p class="guide-text">
-        A DOI (Digital Object Identifier) is a stable link to a work:
-      </p>
-      <ul class="guide-list">
-        <li>Use URL-style DOIs: <code>https://doi.org/10.xxxx/xxxxx</code>.</li>
-        <li>Write DOIs and URLs as live links when possible.</li>
-        <li>Do not end a reference with a period after a DOI or URL.</li>
-        <li>Short DOIs (e.g., from <code>shortdoi.org</code>) are acceptable if they resolve correctly.</li>
-      </ul>
-
-      <h3 class="guide-section-title">8. Common reference patterns (simplified)</h3>
-      <ul class="guide-list">
-        <li>
-          <strong>Journal article with DOI:</strong><br />
-          Author, A. A., &amp; Author, B. B. (Year). Article title in sentence
-          case. <em>Journal Title in Title Case</em>, <em>volume(issue)</em>,
-          pages. <code>https://doi.org/xxx</code>
-        </li>
-        <li>
-          <strong>Book:</strong><br />
-          Author, A. A. (Year). <em>Book title in sentence case</em>.
-          Publisher.
-        </li>
-        <li>
-          <strong>Chapter in edited book:</strong><br />
-          Author, A. A. (Year). Chapter title. In B. B. Editor &amp; C. C.
-          Editor (Eds.), <em>Book title</em> (pp. xx–xx). Publisher.
-        </li>
-        <li>
-          <strong>Webpage:</strong><br />
-          Author, A. A. (Year, Month Day). Title of page. <em>Website Name</em>.
-          URL
-        </li>
-      </ul>
-
-      <p class="guide-note">
-        For special formats (social media, podcasts, conference posters, ERIC
-        documents, etc.), use the same “who, when, what, where” logic and match
-        to the closest official APA example.
-      </p>
-    </section>
-
-    <footer class="footer">
-      <div>
-        Built for APA 7th edition student papers. Always follow your instructor’s
-        specific guidelines if they differ from this summary.
-      </div>
-      <div>
-        Uses Semantic Scholar Academic Graph API for paper metadata via a proxy.
-      </div>
-    </footer>
   </main>
 
-<script>
-  // ========================
-  // Semantic Scholar proxy
-  // ========================
-  const S2_PROXY_URL =
-    "https://s2-proxy.tusar-gads.workers.dev/api/s2-search";
-
-  // ===============
-  // Helper: trimming
-  // ===============
-  function clean(str) {
-    return (str || "").toString().trim();
-  }
-
-  // Detect if the search string is likely a DOI (or DOI URL)
-  function extractDoi(str) {
-    if (!str) return "";
-    const trimmed = str.trim();
-    const doiUrlMatch = trimmed.match(/10\.\S+\/\S+/);
-    if (trimmed.toLowerCase().includes("doi.org/")) {
-      return trimmed.split("doi.org/").pop().trim();
-    }
-    if (/^10\.\S+\/\S+$/i.test(trimmed)) {
-      return trimmed;
-    }
-    return doiUrlMatch ? doiUrlMatch[0] : "";
-  }
-
-  // Convert a title from Title Case to (approximate) sentence case
-  function toSentenceCase(str) {
-    if (!str) return "";
-    let s = str.trim();
-
-    // Keep acronyms / all-caps words as-is by temporarily marking them
-    const tokens = s.split(/\s+/);
-    const marked = tokens.map((w) => {
-      if (w.toUpperCase() === w && w.length > 1) {
-        return `§§${w}§§`; // mark acronyms
-      }
-      return w.toLowerCase();
-    });
-
-    s = marked.join(" ");
-
-    // Capitalize first letter of string
-    s = s.charAt(0).toUpperCase() + s.slice(1);
-
-    // Restore acronyms
-    s = s.replace(/§§(.*?)§§/g, (_, w) => w);
-
-    return s;
-  }
-
-  // =========================================
-  // Manual generator: APA 7th reference line
-  // =========================================
-  function buildManualApaReference() {
-    const type = document.getElementById("source-type").value;
-    const authors = clean(document.getElementById("authors-input").value);
-    const year = clean(document.getElementById("year-input").value);
-    const title = clean(document.getElementById("title-input").value);
-    const container = clean(
-      document.getElementById("container-input").value
-    );
-    const volIssue = clean(document.getElementById("vol-input").value);
-    const pages = clean(document.getElementById("pages-input").value);
-    const publisher = clean(
-      document.getElementById("publisher-input").value
-    );
-    const doiUrl = clean(document.getElementById("doi-input").value);
-
-    const errorBox = document.getElementById("manual-error");
-    errorBox.style.display = "none";
-    errorBox.textContent = "";
-
-    if (!authors || !year || !title) {
-      errorBox.textContent =
-        "At minimum, please fill in author(s), year, and title.";
-      errorBox.style.display = "block";
-      return "";
-    }
-
-    let ref = "";
-
-    // Author + year
-    ref += authors;
-    ref += year ? ` (${year}). ` : ". ";
-
-    // Title (assumes user already used sentence case)
-    ref += title.endsWith(".") ? `${title} ` : `${title}. `;
-
-    if (type === "journal") {
-      if (container) {
-        ref += `<i>${container}</i>`;
-        if (volIssue) {
-          ref += `, <i>${volIssue}</i>`;
-        }
-      }
-      if (pages) {
-        ref += container || volIssue ? `, ${pages}` : pages;
-      }
-      if (doiUrl) {
-        ref += `. ${doiUrl}`;
-      } else {
-        ref += ".";
-      }
-    } else if (type === "book") {
-      if (container) {
-        ref += `<i>${container}</i>`;
-        if (volIssue) {
-          ref += ` (${volIssue})`;
-        }
-        ref += ". ";
-      }
-      if (publisher) {
-        ref += `${publisher}`;
-      }
-      if (doiUrl) {
-        ref += `. ${doiUrl}`;
-      } else {
-        ref += ".";
-      }
-    } else if (type === "chapter") {
-      if (container) {
-        ref += `In ${container}`;
-      }
-      if (pages) {
-        ref += container ? ` (pp. ${pages}). ` : ` (pp. ${pages}). `;
-      } else if (container) {
-        ref += ". ";
-      }
-      if (publisher) {
-        ref += publisher;
-      }
-      if (doiUrl) {
-        ref += `. ${doiUrl}`;
-      } else {
-        ref += ".";
-      }
-    } else if (type === "webpage") {
-      if (container) {
-        ref += `${container}. `;
-      }
-      if (publisher) {
-        ref += `${publisher}. `;
-      }
-      if (doiUrl) {
-        ref += doiUrl;
-      } else {
-        ref = ref.trimEnd();
-      }
-    } else {
-      if (container) {
-        ref += `${container}`;
-        if (volIssue) {
-          ref += `, ${volIssue}`;
-        }
-      }
-      if (pages) {
-        ref += container || volIssue ? `, ${pages}` : pages;
-      }
-      if (publisher) {
-        ref += container || pages ? `. ${publisher}` : publisher;
-      }
-      if (doiUrl) {
-        ref += `. ${doiUrl}`;
-      } else {
-        ref += ".";
-      }
-    }
-
-    // Fix accidental multiple periods before DOI/URL
-    ref = ref.replace(/\.\s+(https?:\/\/)/, " $1");
-
-    return ref.trim();
-  }
-
-  function renderManualCitation(text) {
-    const box = document.getElementById("manual-citation");
-    const copyBtn = document.getElementById("copy-btn");
-    if (!text) {
-      box.classList.add("empty");
-      box.innerHTML = "Your formatted reference will appear here.";
-      copyBtn.disabled = true;
-      return;
-    }
-    box.classList.remove("empty");
-    box.innerHTML = `<span class="citation-line">${text}</span>`;
-    copyBtn.disabled = false;
-  }
-
-  document
-    .getElementById("generate-btn")
-    .addEventListener("click", function () {
-      const ref = buildManualApaReference();
-      renderManualCitation(ref);
-    });
-
-  document.getElementById("copy-btn").addEventListener("click", async () => {
-    const box = document.getElementById("manual-citation");
-    if (box.classList.contains("empty")) return;
-    const text = box.innerText || box.textContent;
-    try {
-      await navigator.clipboard.writeText(text);
-      const btn = document.getElementById("copy-btn");
-      const old = btn.textContent;
-      btn.textContent = "Copied!";
-      setTimeout(() => (btn.textContent = old), 1200);
-    } catch (e) {
-      alert("Could not access clipboard. Please copy manually.");
-    }
-  });
-
-  // ============================================
-  // Semantic Scholar: APA conversion
-  // ============================================
-  function toApaAuthorName(fullName) {
-    // Basic "First M. Last" -> "Last, F. M."
-    if (!fullName) return "";
-    const parts = fullName.trim().split(/\s+/);
-    if (parts.length === 1) return parts[0];
-    const last = parts[parts.length - 1];
-    const initials = parts
-      .slice(0, -1)
-      .map((p) => (p[0] ? p[0].toUpperCase() + "." : ""))
-      .join(" ");
-    return `${last}, ${initials}`.trim();
-  }
-
-  function formatAuthorsFromS2(authors) {
-    if (!Array.isArray(authors) || authors.length === 0) return "";
-    const formatted = authors.map((a) => toApaAuthorName(a.name));
-    if (formatted.length === 1) return formatted[0];
-    if (formatted.length === 2) {
-      return `${formatted[0]}, & ${formatted[1]}`;
-    }
-    if (formatted.length <= 20) {
-      const allButLast = formatted.slice(0, -1).join(", ");
-      const last = formatted[formatted.length - 1];
-      return `${allButLast}, & ${last}`;
-    }
-    // 21+ authors: first 19, …, last (APA 7)
-    const first19 = formatted.slice(0, 19).join(", ");
-    const last = formatted[formatted.length - 1];
-    return `${first19}, …, ${last}`;
-  }
-
-  function apaReferenceFromPaper(paper) {
-    const authors = formatAuthorsFromS2(paper.authors || []);
-    const year = paper.year || "n.d.";
-    const titleRaw = paper.title || "";
-    const title = toSentenceCase(titleRaw);
-
-    // Journal info from paper.journal, falling back to venue
-    const journalObj = paper.journal || {};
-    const journalName =
-      journalObj.name || paper.venue || journalObj.journalName || "";
-    const volume = journalObj.volume || "";
-    const issue = journalObj.issue || "";
-    const pages = journalObj.pages || "";
-
-    // DOI from externalIds
-    const rawDoi =
-      paper.externalIds &&
-      (paper.externalIds.DOI ||
-        paper.externalIds.Doi ||
-        paper.externalIds.doi);
-
-    const doi = rawDoi
-      ? `https://doi.org/${String(rawDoi).replace(
-          /^https?:\/\/doi.org\//i,
-          ""
-        )}`
-      : "";
-
-    const url = paper.url || "";
-
-    let ref = "";
-
-    if (authors) {
-      ref += authors;
-    }
-    ref += ` (${year}). `;
-
-    if (title) {
-      ref += title.endsWith(".") ? `${title} ` : `${title}. `;
-    }
-
-    if (journalName) {
-      ref += `<i>${journalName}</i>`;
-      if (volume) {
-        ref += `, <i>${volume}`;
-        if (issue) {
-          ref += `(${issue})`;
-        }
-        ref += `</i>`;
-      }
-      if (pages) {
-        ref += `, ${pages}`;
-      }
-    }
-
-    if (doi) {
-      ref += `. ${doi}`;
-    } else if (url) {
-      ref += `. ${url}`;
-    } else {
-      ref += ".";
-    }
-
-    // Avoid " . https://..."
-    ref = ref.replace(/\.\s+(https?:\/\/)/, " $1`);
-
-    return ref.trim();
-  }
-
-  function renderS2Results(list) {
-    const container = document.getElementById("s2-results");
-    container.innerHTML = "";
-    if (!list || list.length === 0) {
-      container.innerHTML =
-        '<span class="guide-text">No results. Try different keywords or fewer filters.</span>';
-      return;
-    }
-
-    list.forEach((paper) => {
-      const div = document.createElement("div");
-      div.className = "paper";
-
-      const authorsShort = (paper.authors || [])
-        .slice(0, 3)
-        .map((a) => a.name)
-        .join(", ");
-      const extraAuthors =
-        (paper.authors || []).length > 3 ? ", et al." : "";
-
-      const jName =
-        (paper.journal && paper.journal.name) || paper.venue || "";
-
-      div.innerHTML = `
-        <div class="paper-header">
-          <div>
-            <div class="paper-title">${paper.title || "Untitled"}</div>
-            <div class="paper-meta">
-              ${paper.year || "n.d."}${
-        jName ? " · " + jName : ""
-      }<br/>
-              ${authorsShort || "Unknown authors"}${extraAuthors}
-            </div>
-          </div>
-          <div class="paper-actions">
-            <button class="btn secondary btn-small">
-              APA reference
-            </button>
-            ${
-              paper.url
-                ? `<a href="${paper.url}" class="paper-link" target="_blank" rel="noopener noreferrer">View on Semantic Scholar</a>`
-                : ""
-            }
-          </div>
-        </div>
-      `;
-
-      const btn = div.querySelector("button");
-      btn.addEventListener("click", () => {
-        const ref = apaReferenceFromPaper(paper);
-        const box = document.getElementById("s2-citation");
-        const copyBtn = document.getElementById("s2-copy-btn");
-        box.classList.remove("empty");
-        box.innerHTML = `<span class="citation-line">${ref}</span>`;
-        copyBtn.disabled = false;
-      });
-
-      container.appendChild(div);
-    });
-  }
-
-  async function searchSemanticScholar() {
-    const queryInput = document.getElementById("s2-query");
-    const query = clean(queryInput.value);
-    const status = document.getElementById("s2-status");
-    const errorBox = document.getElementById("s2-error");
-    const btn = document.getElementById("s2-search-btn");
-    const copyBtn = document.getElementById("s2-copy-btn");
-
-    errorBox.style.display = "none";
-    errorBox.textContent = "";
-    copyBtn.disabled = true;
-
-    if (!query) {
-      errorBox.textContent = "Type a keyword, title, author, or DOI first.";
-      errorBox.style.display = "block";
-      return;
-    }
-
-    const doi = extractDoi(query);
-    const isDoiLookup = !!doi;
-
-    status.textContent = isDoiLookup
-      ? "Fetching paper metadata by DOI…"
-      : "Searching via Semantic Scholar proxy…";
-    btn.disabled = true;
-
-    try {
-      const url = isDoiLookup
-        ? `${S2_PROXY_URL}?doi=${encodeURIComponent(doi)}`
-        : `${S2_PROXY_URL}?q=${encodeURIComponent(query)}`;
-
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(`Proxy error (${response.status}): ${text}`);
-      }
-
-      const data = await response.json();
-
-      if (isDoiLookup) {
-        const paper = data.data || data.paper || data;
-        if (!paper || !paper.title) {
-          status.textContent = "No paper found for that DOI.";
-          renderS2Results([]);
-          return;
-        }
-        renderS2Results([paper]);
-
-        const ref = apaReferenceFromPaper(paper);
-        const box = document.getElementById("s2-citation");
-        box.classList.remove("empty");
-        box.innerHTML = `<span class="citation-line">${ref}</span>`;
-        copyBtn.disabled = false;
-
-        status.textContent =
-          "DOI matched. Reference generated using Semantic Scholar metadata.";
-      } else {
-        const results = data.data || data.papers || data.results || [];
-        renderS2Results(results);
-        status.textContent =
-          results.length > 0
-            ? `Showing ${results.length} results from Semantic Scholar.`
-            : "No results found.";
-      }
-    } catch (err) {
-      console.error(err);
-      errorBox.textContent =
-        "Could not fetch data from Semantic Scholar. Check the proxy URL and API key configuration.";
-      errorBox.style.display = "block";
-      status.textContent = "";
-    } finally {
-      btn.disabled = false;
-    }
-  }
-
-  document
-    .getElementById("s2-search-btn")
-    .addEventListener("click", searchSemanticScholar);
-
-  document.getElementById("s2-query").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      searchSemanticScholar();
-    }
-  });
-
-  // Copy button for Semantic Scholar citation
-  document
-    .getElementById("s2-copy-btn")
-    .addEventListener("click", async () => {
-      const box = document.getElementById("s2-citation");
-      if (box.classList.contains("empty")) return;
-      const text = box.innerText || box.textContent;
-      try {
-        await navigator.clipboard.writeText(text);
-        const btn = document.getElementById("s2-copy-btn");
-        const old = btn.textContent;
-        btn.textContent = "Copied!";
-        setTimeout(() => (btn.textContent = old), 1200);
-      } catch (e) {
-        alert("Could not access clipboard. Please copy manually.");
-      }
-    });
-</script>
-
+  <!-- JS App -->
+  <script src="app.js"></script>
 </body>
 </html>
