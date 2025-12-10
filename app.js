@@ -30,7 +30,7 @@ function extractDoi(str) {
   return m ? m[0] : "";
 }
 
-// Convert Title Case → APA sentence case (approximate)
+// Convert Title Case → APA sentence case (with colon/dash rules)
 function toSentenceCase(str) {
   if (!str) return "";
   let s = str.trim();
@@ -48,6 +48,10 @@ function toSentenceCase(str) {
 
   // Capitalize first letter of the whole title
   s = s.charAt(0).toUpperCase() + s.slice(1);
+
+  // Capitalize first letter after ":" and "-"
+  s = s.replace(/(:\s+)([a-z])/g, (match, p1, p2) => p1 + p2.toUpperCase());
+  s = s.replace(/(-\s+)([a-z])/g, (match, p1, p2) => p1 + p2.toUpperCase());
 
   // Restore acronyms
   s = s.replace(/§§(.*?)§§/g, (_, w) => w);
@@ -94,7 +98,7 @@ function formatAuthorsFromMerged(dataAuthors) {
 }
 
 /* ============================================================
-   APA REFERENCE (FROM MERGED DOI LOOKUP)
+   APA REFERENCE (FROM MERGED / S2 DATA)
    ============================================================ */
 
 function apaReferenceFromPaper(paper) {
@@ -102,12 +106,14 @@ function apaReferenceFromPaper(paper) {
   const year = paper.year || "n.d.";
   const title = toSentenceCase(paper.title || "");
 
+  // Journal info – support both merged object and raw S2 search object
   const j = paper.journal || {};
-  const journalName = j.name || "";
-  const volume = j.volume || "";
-  const issue = j.issue || "";
-  const pages = j.pages || "";
+  const journalName = j.name || paper.venue || "";
+  const volume = j.volume || paper.volume || "";
+  const issue = j.issue || paper.issue || "";
+  const pages = j.pages || paper.pages || "";
 
+  // DOI (from merged or raw externalIds)
   const rawDoi =
     paper.doi ||
     (paper.externalIds &&
@@ -122,7 +128,11 @@ function apaReferenceFromPaper(paper) {
       )}`
     : "";
 
-  const url = paper.url || "";
+  // URL – avoid Semantic Scholar URL when there is no DOI
+  let url = paper.url || "";
+  if (!doi && url && /semanticscholar\.org/i.test(url)) {
+    url = "";
+  }
 
   let ref = "";
 
@@ -135,7 +145,7 @@ function apaReferenceFromPaper(paper) {
     ref += title.endsWith(".") ? `${title} ` : `${title}. `;
   }
 
-  // Journal block  → *Signals, 4*(1), 1–39
+  // Journal block → e.g. *Signals, 4*(1), 427–433
   if (journalName) {
     ref += `<i>${journalName}</i>`;
     if (volume) {
@@ -189,7 +199,6 @@ function buildManualApaReference() {
   }
 
   let ref = `${authors} (${year}). `;
-
   ref += title.endsWith(".") ? `${title} ` : `${title}. `;
 
   if (type === "journal") {
@@ -211,7 +220,6 @@ function buildManualApaReference() {
     if (publisher) ref += `${publisher}. `;
     ref += doiUrl ? doiUrl : "";
   } else {
-    // generic
     if (container) ref += `${container}`;
     if (volIssue) ref += `, ${volIssue}`;
     if (pages) ref += `, ${pages}`;
@@ -260,7 +268,7 @@ async function copyTextFrom(elementId, buttonId) {
 }
 
 /* ============================================================
-   SEMANTIC SCHOLAR SEARCH RESULTS RENDER
+   SEMANTIC SCHOLAR RESULTS RENDERING
    ============================================================ */
 
 function renderS2Results(list) {
@@ -300,7 +308,7 @@ function renderS2Results(list) {
           <button class="btn secondary btn-small">APA Reference</button>
           ${
             paper.url
-              ? `<a href="${paper.url}" class="paper-link" target="_blank">View</a>`
+              ? `<a href="${paper.url}" class="paper-link" target="_blank" rel="noopener noreferrer">View</a>`
               : ""
           }
         </div>
@@ -316,7 +324,7 @@ function renderS2Results(list) {
 }
 
 /* ============================================================
-   SEMANTIC SCHOLAR + CROSSREF DOI LOOKUP
+   GENERATE & SEARCH (S2 + CROSSREF)
    ============================================================ */
 
 function generateS2Citation(paper) {
@@ -373,13 +381,14 @@ async function searchSemanticScholar() {
       return;
     }
 
-    // Search results
+    // Search results (raw Semantic Scholar)
     const results = data.data || data.results || [];
     renderS2Results(results);
     status.textContent = `Found ${results.length} paper(s).`;
   } catch (e) {
+    console.error(e);
     errorBox.textContent =
-      "Could not fetch data. Check your Worker, API key, or CORS.";
+      "Could not fetch data. Check Worker, API key, or CORS.";
     errorBox.style.display = "block";
   } finally {
     btn.disabled = false;
