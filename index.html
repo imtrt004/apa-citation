@@ -38,8 +38,7 @@
           <span class="card-title-pill">Works Cited</span>
         </div>
         <p class="card-description">
-          Choose a content type, see an official-style example from the guide,
-          then fill in only the fields that matter for that source.
+          Choose a content type from the APA quick guide, see a sample, and fill in only the fields required for that type.
         </p>
       </div>
       <div class="pill">APA 7th • Hanging Indent</div>
@@ -47,87 +46,103 @@
 
     <!-- Content type selector -->
     <div class="field-full">
-      <label for="source-type">Content type</label>
+      <label for="source-type">Content type (from APA quick guide)</label>
       <select id="source-type" class="input">
         <!-- BOOKS -->
-        <option value="book-single">Book (single author)</option>
-        <option value="book-multi">Book (multiple / corporate author)</option>
-        <option value="edited-book">Edited book</option>
-        <option value="chapter-edited-book">Chapter in edited book / anthology</option>
+        <option value="book-single">Book – single author</option>
+        <option value="book-2-authors">Book – 2 authors</option>
+        <option value="book-multi">Book – multiple authors</option>
+        <option value="book-corporate">Book – corporate / publisher as author (with DOI)</option>
+        <option value="book-ebook-url">Book – ebook / audiobook with non-database URL</option>
+        <option value="book-edition-later">Book – 2nd or later edition</option>
+        <option value="book-edition-revised">Book – revised edition</option>
+        <option value="book-edited">Edited book (no author)</option>
+        <option value="book-translation">Book – translation</option>
+        <option value="book-intro-preface">Book – foreword / introduction / preface / afterword</option>
+        <option value="book-multivol-all">Multivolume work – all volumes</option>
+        <option value="book-multivol-one">Multivolume work – one volume</option>
+        <option value="book-anthology-work">Work in an anthology</option>
+        <option value="encyclopedia-signed">Encyclopedia entry – signed (print)</option>
+        <option value="encyclopedia-unsigned">Encyclopedia entry – unsigned (print)</option>
 
         <!-- PERIODICALS -->
-        <option value="journal-doi">Journal article (with DOI)</option>
-        <option value="journal-no-doi">Journal article (no DOI)</option>
-        <option value="magazine-web">Magazine article (web)</option>
+        <option value="journal-with-doi">Journal article – with DOI</option>
+        <option value="journal-without-doi">Journal article – without DOI</option>
+        <option value="journal-no-issue">Journal article – no issue number</option>
+        <option value="journal-21plus">Journal article – 21 or more authors</option>
+        <option value="newspaper-database">Newspaper article – from database</option>
+        <option value="newspaper-web">Newspaper article – from web</option>
+        <option value="magazine-database">Magazine article – from database</option>
+        <option value="magazine-web">Magazine article – from web</option>
+        <option value="editorial">Editorial (journal)</option>
 
-        <!-- REFERENCE WORKS -->
-        <option value="encyclopedia-signed">Encyclopedia entry (signed)</option>
-        <option value="encyclopedia-unsigned">Encyclopedia entry (unsigned)</option>
+        <!-- DISSERTATIONS -->
+        <option value="thesis-database">Thesis / dissertation – from database</option>
+        <option value="thesis-unpublished">Thesis / dissertation – unpublished</option>
+        <option value="thesis-online">Thesis / dissertation – published online (not in database)</option>
 
-        <!-- OTHER -->
-        <option value="thesis">Thesis / dissertation</option>
+        <!-- MEETINGS & REPORTS -->
+        <option value="meeting-unpublished-paper">Conference / meeting paper – unpublished</option>
+        <option value="annual-report">Annual report</option>
+        <option value="company-profile">Company profile</option>
+
+        <!-- ELECTRONIC / MEDIA -->
+        <option value="music-album">Music album</option>
+        <option value="music-classical">Music album – classical work</option>
+        <option value="encyclopedia-online">Encyclopedia entry – online</option>
+        <option value="eric-document">ERIC document (ED, non-journal)</option>
+        <option value="blog-post">Blog post</option>
+        <option value="facebook-post">Facebook post</option>
+        <option value="video-youtube">Video – YouTube / streaming</option>
+        <option value="video-ted-site">TED Talk – viewed on ted.com</option>
+        <option value="video-ted-youtube">TED Talk – viewed on YouTube</option>
+
+        <!-- WEBPAGE -->
         <option value="webpage">Webpage on a website</option>
-        <option value="generic">Generic / custom</option>
+
+        <!-- FALLBACK -->
+        <option value="generic">Generic / custom (manual)</option>
       </select>
     </div>
 
     <!-- Example from the APA quick guide -->
     <div id="type-example" class="type-example">
-      <!-- Filled by JS based on content type -->
+      <!-- JS fills this based on type -->
     </div>
 
     <!-- AUTHORS -->
     <div class="field-full field-group" data-field="authors">
       <label for="authors-input">Author(s)</label>
-      <input
-        id="authors-input"
-        class="input"
-        type="text"
-        placeholder=""
-      />
+      <input id="authors-input" class="input" type="text" />
     </div>
 
     <!-- YEAR -->
     <div class="field-full field-group" data-field="year">
-      <label for="year-input">Year</label>
-      <input
-        id="year-input"
-        class="input"
-        type="text"
-        placeholder=""
-      />
+      <label for="year-input">Year / date</label>
+      <input id="year-input" class="input" type="text" />
     </div>
 
     <!-- TITLE -->
     <div class="field-full field-group" data-field="title">
       <label for="title-input">Title of work</label>
-      <input
-        id="title-input"
-        class="input"
-        type="text"
-        placeholder=""
-      />
+      <input id="title-input" class="input" type="text" />
     </div>
 
-    <!-- CONTAINER + VOLUME/ISSUE -->
+    <!-- CONTAINER (journal / book / site) -->
+    <div class="field-full field-group" data-field="container">
+      <label for="container-input">Source (journal, book, website, etc.)</label>
+      <input id="container-input" class="input" type="text" />
+    </div>
+
+    <!-- VOLUME + ISSUE -->
     <div class="input-row">
-      <div class="field field-group" data-field="container">
-        <label for="container-input">Journal / book / site / source</label>
-        <input
-          id="container-input"
-          class="input"
-          type="text"
-          placeholder=""
-        />
+      <div class="field field-group" data-field="volume">
+        <label for="volume-input">Volume</label>
+        <input id="volume-input" class="input" type="text" />
       </div>
-      <div class="field field-group" data-field="volIssue">
-        <label for="vol-input">Volume (and issue)</label>
-        <input
-          id="vol-input"
-          class="input"
-          type="text"
-          placeholder=""
-        />
+      <div class="field field-group" data-field="issue">
+        <label for="issue-input">Issue</label>
+        <input id="issue-input" class="input" type="text" />
       </div>
     </div>
 
@@ -135,42 +150,23 @@
     <div class="input-row">
       <div class="field field-group" data-field="pages">
         <label for="pages-input">Page range</label>
-        <input
-          id="pages-input"
-          class="input"
-          type="text"
-          placeholder=""
-        />
+        <input id="pages-input" class="input" type="text" />
       </div>
       <div class="field field-group" data-field="publisher">
         <label for="publisher-input">Publisher / institution</label>
-        <input
-          id="publisher-input"
-          class="input"
-          type="text"
-          placeholder=""
-        />
+        <input id="publisher-input" class="input" type="text" />
       </div>
     </div>
 
-    <!-- DOI / URL -->
+    <!-- DOI / URL / ID -->
     <div class="field-full field-group" data-field="doi">
-      <label for="doi-input">DOI or URL</label>
-      <input
-        id="doi-input"
-        class="input"
-        type="text"
-        placeholder=""
-      />
+      <label for="doi-input">DOI / URL / ID</label>
+      <input id="doi-input" class="input" type="text" />
     </div>
 
     <div class="btn-row">
-      <button class="btn" id="generate-btn">
-        ✨ Generate reference
-      </button>
-      <button class="btn secondary" id="copy-btn" disabled>
-        📋 Copy to clipboard
-      </button>
+      <button class="btn" id="generate-btn">✨ Generate reference</button>
+      <button class="btn secondary" id="copy-btn" disabled>📋 Copy</button>
     </div>
 
     <div id="manual-error" class="error" style="display:none;"></div>
@@ -183,6 +179,7 @@
     </div>
   </div>
 </section>
+
 
       <!-- Semantic Scholar + Crossref -->
       <section class="card">
