@@ -1468,7 +1468,11 @@ updateManualFormForType(document.getElementById("source-type").value);
    THEME TOGGLE + LOCAL STORAGE
    ============================================================ */
 
-(function setupThemeToggle() {
+/* ============================================================
+   THEME TOGGLE + LOCAL STORAGE
+   ============================================================ */
+
+function initThemeToggle() {
   const THEME_KEY = "apa-7th-theme";
   const root = document.documentElement;
   const toggle = document.getElementById("theme-toggle");
@@ -1476,19 +1480,37 @@ updateManualFormForType(document.getElementById("source-type").value);
   function applyTheme(theme) {
     const normalized = theme === "light" ? "light" : "dark";
     root.setAttribute("data-theme", normalized);
-    localStorage.setItem(THEME_KEY, normalized);
+    try {
+      localStorage.setItem(THEME_KEY, normalized);
+    } catch (e) {
+      // ignore storage errors
+    }
   }
 
-  // Initial theme: localStorage → system preference → dark
-  const saved = localStorage.getItem(THEME_KEY);
-  if (saved === "light" || saved === "dark") {
-    applyTheme(saved);
-  } else {
-    const prefersLight = window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: light)").matches;
-    applyTheme(prefersLight ? "light" : "dark");
+  // --- Initial theme sync ---
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved === "light" || saved === "dark") {
+      // use saved preference
+      applyTheme(saved);
+    } else {
+      // if head script already set data-theme, respect that
+      const existing = root.getAttribute("data-theme");
+      if (existing === "light" || existing === "dark") {
+        applyTheme(existing);
+      } else {
+        const prefersLight =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: light)").matches;
+        applyTheme(prefersLight ? "light" : "dark");
+      }
+    }
+  } catch (e) {
+    // fallback
+    root.setAttribute("data-theme", "dark");
   }
 
+  // --- Wire up toggle button (may not exist on all pages) ---
   if (!toggle) return;
 
   toggle.addEventListener("click", () => {
@@ -1496,5 +1518,9 @@ updateManualFormForType(document.getElementById("source-type").value);
     const next = current === "dark" ? "light" : "dark";
     applyTheme(next);
   });
-})();
+}
+
+// Run AFTER DOM is ready so it works on every page
+document.addEventListener("DOMContentLoaded", initThemeToggle);
+
 
