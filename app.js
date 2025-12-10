@@ -944,12 +944,19 @@ function apaReferenceFromPaper(paper) {
   const year = paper.year || "n.d.";
   const title = toSentenceCase(paper.title || "");
 
+  // Journal info – support merged + raw S2
   const j = paper.journal || {};
   const journalName = j.name || paper.venue || "";
   const volume = j.volume || paper.volume || "";
   const issue = j.issue || paper.issue || "";
-  const pages = j.pages || paper.pages || "";
+  const pagesRaw = j.pages || paper.pages || "";
 
+  // Normalize pages: use en dash between numbers when written with hyphen
+  const pages = pagesRaw
+    ? pagesRaw.replace(/(\d)\-(\d)/g, "$1–$2")
+    : "";
+
+  // DOI
   const rawDoi =
     paper.doi ||
     (paper.externalIds &&
@@ -964,6 +971,7 @@ function apaReferenceFromPaper(paper) {
       )}`
     : "";
 
+  // URL – do NOT use Semantic Scholar URL when there’s no DOI
   let url = paper.url || "";
   if (!doi && url && /semanticscholar\.org/i.test(url)) {
     url = "";
@@ -971,30 +979,31 @@ function apaReferenceFromPaper(paper) {
 
   let ref = "";
 
+  // Authors
   if (authors) ref += authors;
   ref += ` (${year}). `;
 
+  // Title
   if (title) {
     ref += title.endsWith(".") ? `${title} ` : `${title}. `;
   }
 
-// before: volume and issue both inside italics
-// after: volume italic, issue not
-
-if (journalName) {
-  ref += `<i>${journalName}</i>`;
-  if (volume) {
-    ref += `, <i>${volume}</i>`;
-    if (issue) {
-      ref += `(${issue})`;
+  // Journal block – APA: Journal, volume(issue), pages.
+  if (journalName) {
+    ref += `${journalName}`;
+    if (volume) {
+      // volume italic, issue plain
+      ref += `, <i>${volume}</i>`;
+      if (issue) {
+        ref += `(${issue})`;
+      }
+    }
+    if (pages) {
+      ref += `, ${pages}`;
     }
   }
-  if (pages) {
-    ref += `, ${pages}`;
-  }
-}
 
-
+  // End punctuation + DOI/URL
   if (doi) {
     ref += `. ${doi}`;
   } else if (url) {
@@ -1003,9 +1012,11 @@ if (journalName) {
     ref += ".";
   }
 
-  ref = ref.replace(/\.\s+(https?:\/\/)/, " $1");
+  // DO NOT strip the period before DOIs anymore.
+  ref = ref.replace(/\s+\./g, "."); // just remove stray spaces before periods
   return ref.trim();
 }
+
 
 /* ============================================================
    MANUAL FORM: TYPE HANDLING
@@ -1039,20 +1050,26 @@ function updateManualFormForType(type) {
    MANUAL APA GENERATOR
    ============================================================ */
 
+function getInputValue(id) {
+  const el = document.getElementById(id);
+  return el ? clean(el.value) : "";
+}
+
 function buildManualApaReference() {
   const type = document.getElementById("source-type").value;
   const cfg = CONTENT_TYPES[type] || CONTENT_TYPES["generic"];
   const group = cfg.group || "generic";
 
-  const authors = clean(document.getElementById("authors-input").value);
-  const year = clean(document.getElementById("year-input").value);
-  const title = clean(document.getElementById("title-input").value);
-  const container = clean(document.getElementById("container-input").value);
-  const volume = clean(document.getElementById("volume-input").value);
-  const issue = clean(document.getElementById("issue-input").value);
-  const pages = clean(document.getElementById("pages-input").value);
-  const publisher = clean(document.getElementById("publisher-input").value);
-  const doiUrl = clean(document.getElementById("doi-input").value);
+const authors   = getInputValue("authors-input");
+const year      = getInputValue("year-input");
+const title     = getInputValue("title-input");
+const container = getInputValue("container-input");
+const volume    = getInputValue("volume-input");
+const issue     = getInputValue("issue-input");
+const pages     = getInputValue("pages-input");
+const publisher = getInputValue("publisher-input");
+const doiUrl    = getInputValue("doi-input");
+
 
   const errorBox = document.getElementById("manual-error");
   errorBox.style.display = "none";
@@ -1430,3 +1447,38 @@ document.getElementById("source-type").addEventListener("change", (e) => {
 
 // Initialize form on load
 updateManualFormForType(document.getElementById("source-type").value);
+
+/* ============================================================
+   THEME TOGGLE + LOCAL STORAGE
+   ============================================================ */
+
+(function setupThemeToggle() {
+  const THEME_KEY = "apa-7th-theme";
+  const root = document.documentElement;
+  const toggle = document.getElementById("theme-toggle");
+
+  function applyTheme(theme) {
+    const normalized = theme === "light" ? "light" : "dark";
+    root.setAttribute("data-theme", normalized);
+    localStorage.setItem(THEME_KEY, normalized);
+  }
+
+  // Initial theme: localStorage → system preference → dark
+  const saved = localStorage.getItem(THEME_KEY);
+  if (saved === "light" || saved === "dark") {
+    applyTheme(saved);
+  } else {
+    const prefersLight = window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: light)").matches;
+    applyTheme(prefersLight ? "light" : "dark");
+  }
+
+  if (!toggle) return;
+
+  toggle.addEventListener("click", () => {
+    const current = root.getAttribute("data-theme") || "dark";
+    const next = current === "dark" ? "light" : "dark";
+    applyTheme(next);
+  });
+})();
+
