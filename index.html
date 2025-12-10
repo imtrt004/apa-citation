@@ -12,20 +12,36 @@
 <body>
   <main class="page">
     <header class="header">
-      <div class="badge">
-        <span class="badge-dot"></span>
-        APA 7th • Reference Generator
-      </div>
+  <div class="header-top">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      APA 7th • Reference Generator
+    </div>
 
-      <h1>
-        Smart <span class="highlight">APA References</span> for your papers
-      </h1>
+    <!-- Theme toggle -->
+    <button
+      class="theme-toggle"
+      id="theme-toggle"
+      type="button"
+      aria-label="Toggle light/dark theme"
+    >
+      <span class="theme-toggle-track">
+        <span class="theme-toggle-thumb"></span>
+        <span class="theme-toggle-icon theme-toggle-icon--moon">🌙</span>
+        <span class="theme-toggle-icon theme-toggle-icon--sun">☀️</span>
+      </span>
+    </button>
+  </div>
 
-      <p class="subtitle">
-        Generate APA 7 references manually or fetch fully authenticated data using 
-        Semantic Scholar + Crossref via your Cloudflare Worker.
-      </p>
-    </header>
+  <h1>
+    Smart <span class="highlight">APA References</span> for your papers
+  </h1>
+
+  <p class="subtitle">
+    Generate APA 7 references manually or fetch fully authenticated data using 
+    Semantic Scholar + Crossref via your Cloudflare Worker.
+  </p>
+</header>
 
     <section class="grid">
 <!-- Left: Manual APA generator -->
