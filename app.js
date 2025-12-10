@@ -1340,13 +1340,94 @@ function renderS2Results(list) {
       </div>
     `;
 
-    div
-      .querySelector("button")
-      .addEventListener("click", () => generateS2Citation(paper));
+div
+  .querySelector("button")
+  .addEventListener("click", () => onPaperApaClick(paper));
+
 
     container.appendChild(div);
   });
 }
+
+
+/*
+Newly added for correct data
+*/
+
+async function onPaperApaClick(paper) {
+  const status = document.getElementById("s2-status");
+  const errorBox = document.getElementById("s2-error");
+
+  if (errorBox) {
+    errorBox.style.display = "none";
+    errorBox.textContent = "";
+  }
+  if (status) {
+    status.textContent = "";
+  }
+
+  // If this is already a merged object from our Worker (has raw.crossref or raw.semanticScholar),
+  // no need to re-fetch: just format it.
+  const isMergedAlready =
+    paper &&
+    typeof paper === "object" &&
+    paper.raw &&
+    (paper.raw.crossref || paper.raw.semanticScholar);
+
+  if (isMergedAlready) {
+    if (status) status.textContent = "Using merged Semantic Scholar + Crossref metadata.";
+    generateS2Citation(paper);
+    return;
+  }
+
+  // Try to pull a DOI from the paper
+  const external = (paper && paper.externalIds) || {};
+  const candidateDoi =
+    paper.doi ||
+    external.DOI ||
+    external.Doi ||
+    external.doi ||
+    "";
+
+  const doi = extractDoi(candidateDoi);
+
+  // If we have a DOI → call Worker ?doi= and get full merged data
+  if (doi) {
+    if (status) {
+      status.textContent = "Fetching merged Semantic Scholar + Crossref metadata…";
+    }
+
+    try {
+      const url = `${S2_PROXY_URL}?doi=${encodeURIComponent(doi)}`;
+      const resp = await fetch(url);
+      const data = await resp.json();
+
+      if (!resp.ok) {
+        throw new Error(JSON.stringify(data));
+      }
+
+      generateS2Citation(data);
+
+      if (status) {
+        status.textContent = "Merged reference generated from DOI.";
+      }
+      return;
+    } catch (e) {
+      console.error("Failed to enrich via DOI:", e);
+      if (errorBox) {
+        errorBox.textContent =
+          "Could not fetch full Crossref metadata. Showing Semantic Scholar-only reference.";
+        errorBox.style.display = "block";
+      }
+      // fall through to S2-only formatting
+    }
+  }
+
+  // No DOI or DOI enrichment failed → fallback to plain Semantic Scholar record
+  if (status) status.textContent = "Generating reference from Semantic Scholar data only.";
+  generateS2Citation(paper);
+}
+
 
 /* ============================================================
    GENERATE & SEARCH (S2 + CROSSREF)
