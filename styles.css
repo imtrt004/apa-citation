@@ -463,3 +463,201 @@
     .footer a:hover {
       text-decoration: underline;
     }
+
+/* ============================================================
+   THEME VARIABLES (DARK / LIGHT)
+   ============================================================ */
+
+:root {
+  --color-bg: #020617;
+  --color-bg-elevated: #020617;
+  --color-border: #1f2937;
+  --color-text: #e5e7eb;
+  --color-text-soft: #9ca3af;
+  --color-accent: #6366f1;
+  --color-accent-soft: rgba(99, 102, 241, 0.16);
+  --color-input-bg: #020617;
+  --color-input-border: #1f2937;
+  --color-badge-bg: rgba(15, 23, 42, 0.9);
+  --shadow-soft: 0 20px 40px rgba(15, 23, 42, 0.7);
+}
+
+:root[data-theme="light"] {
+  --color-bg: #f4f4f5;
+  --color-bg-elevated: #ffffff;
+  --color-border: #e4e4e7;
+  --color-text: #020617;
+  --color-text-soft: #6b7280;
+  --color-accent: #4f46e5;
+  --color-accent-soft: rgba(79, 70, 229, 0.12);
+  --color-input-bg: #ffffff;
+  --color-input-border: #d4d4d8;
+  --color-badge-bg: rgba(255, 255, 255, 0.8);
+  --shadow-soft: 0 18px 30px rgba(15, 23, 42, 0.16);
+}
+
+/* Apply theme colors */
+
+body {
+  background: radial-gradient(circle at top, rgba(56,189,248,0.18), transparent 55%),
+              radial-gradient(circle at bottom, rgba(79,70,229,0.21), transparent 60%),
+              var(--color-bg);
+  color: var(--color-text);
+}
+
+.page {
+  color: var(--color-text);
+}
+
+.card {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-soft);
+}
+
+.header .subtitle,
+.card-description,
+.hint,
+.guide-text {
+  color: var(--color-text-soft);
+}
+
+.badge {
+  background: var(--color-badge-bg);
+  border-color: rgba(148, 163, 184, 0.5);
+  color: var(--color-text-soft);
+}
+
+.input {
+  background: var(--color-input-bg);
+  border-color: var(--color-input-border);
+  color: var(--color-text);
+}
+
+.input::placeholder {
+  color: var(--color-text-soft);
+}
+
+.btn {
+  background: var(--color-accent);
+  border-color: transparent;
+  color: #f9fafb;
+}
+
+.btn.secondary {
+  background: transparent;
+  border-color: rgba(148, 163, 184, 0.7);
+  color: var(--color-text-soft);
+}
+
+.citation-output {
+  background: rgba(15, 23, 42, 0.5);
+  border-color: rgba(148, 163, 184, 0.5);
+}
+
+:root[data-theme="light"] .citation-output {
+  background: #f9fafb;
+}
+
+/* ============================================================
+   HEADER TOP ROW & THEME TOGGLE
+   ============================================================ */
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Toggle container */
+
+.theme-toggle {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+.theme-toggle-track {
+  position: relative;
+  width: 54px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+:root[data-theme="light"] .theme-toggle-track {
+  background: #e5e7eb;
+  border-color: #d4d4d8;
+}
+
+/* Toggle thumb */
+
+.theme-toggle-thumb {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: #f9fafb;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.35);
+  transform: translateX(0);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Icons */
+
+.theme-toggle-icon {
+  position: relative;
+  font-size: 14px;
+  flex: 0 0 auto;
+  opacity: 0.7;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.theme-toggle-icon--moon {
+  margin-right: auto;
+  transform: translateX(0);
+}
+
+.theme-toggle-icon--sun {
+  margin-left: auto;
+  transform: translateX(6px);
+  opacity: 0;
+}
+
+/* State: light theme */
+
+:root[data-theme="light"] .theme-toggle-thumb {
+  transform: translateX(24px);
+}
+
+:root[data-theme="light"] .theme-toggle-icon--moon {
+  opacity: 0;
+  transform: translateX(-6px) scale(0.9);
+}
+
+:root[data-theme="light"] .theme-toggle-icon--sun {
+  opacity: 1;
+  transform: translateX(0) scale(1.03);
+}
+
+/* Hover / focus */
+
+.theme-toggle-track:hover {
+  box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.35);
+}
+
+.theme-toggle:focus-visible .theme-toggle-track {
+  box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.55);
+}
+
