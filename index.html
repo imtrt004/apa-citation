@@ -541,7 +541,7 @@
                 id="year-input"
                 class="input"
                 type="text"
-                placeholder="2023 or 2023, May 10"
+                placeholder="2015"
               />
             </div>
             <div class="field">
@@ -550,7 +550,7 @@
                 id="title-input"
                 class="input"
                 type="text"
-                placeholder="Sentence case: only first word &amp; proper nouns capitalized"
+                placeholder="Sentence case; first word &amp; proper nouns capitalized"
               />
             </div>
           </div>
@@ -564,7 +564,7 @@
                 id="container-input"
                 class="input"
                 type="text"
-                placeholder="Journal of Something, Book Title, or Website Name"
+                placeholder="The Lancet, Journal name, book title, or website"
               />
             </div>
             <div class="field">
@@ -573,7 +573,7 @@
                 id="vol-input"
                 class="input"
                 type="text"
-                placeholder="12(3)"
+                placeholder="386(10008)"
               />
             </div>
           </div>
@@ -585,7 +585,7 @@
                 id="pages-input"
                 class="input"
                 type="text"
-                placeholder="123–145"
+                placeholder="2059–2068"
               />
             </div>
             <div class="field">
@@ -607,11 +607,11 @@
               id="doi-input"
               class="input"
               type="text"
-              placeholder="https://doi.org/10.xxxx/xxxxx or https://example.com"
+              placeholder="https://doi.org/10.1016/S0140-6736(15)00257-3"
             />
             <div class="hint">
               APA 7 uses the URL-style DOI:
-              <code>https://doi.org/xx.xxxx/xxxxx</code>. No period after a DOI
+              <code>https://doi.org/10.xxxx/xxxxx</code>. No period after a DOI
               or URL.
             </div>
           </div>
@@ -652,7 +652,8 @@
                 <span class="card-title-pill">API • Live data</span>
               </div>
               <p class="card-description">
-                Search Semantic Scholar for a paper, then click to generate an APA 7th reference using the returned metadata.
+                Paste a DOI or search by keywords, then click to generate an APA
+                7th reference using Semantic Scholar metadata.
               </p>
             </div>
             <div class="pill">
@@ -661,15 +662,16 @@
           </div>
 
           <div class="field-full">
-            <label for="s2-query">Search papers</label>
+            <label for="s2-query">Search papers or paste DOI</label>
             <input
               id="s2-query"
               class="input"
               type="text"
-              placeholder="Keywords, title, or author name…"
+              placeholder="e.g., https://doi.org/10.1016/S0140-6736(15)00257-3 or servant leadership"
             />
             <div class="hint">
-              Example: “servant leadership higher education” or a specific article title.
+              Paste a DOI for the most accurate citation, or search by title /
+              keywords / author.
             </div>
           </div>
 
@@ -690,7 +692,14 @@
               Last reference generated from Semantic Scholar
             </div>
             <div id="s2-citation" class="citation-output empty">
-              Select a paper above to generate an APA 7th reference line.
+              Select a paper above (or fetch by DOI) to generate an APA 7th reference line.
+            </div>
+            <div class="btn-row" style="margin-top:0.4rem;">
+              <button class="btn secondary" id="s2-copy-btn" disabled>
+                <span class="btn-icon">📋</span>
+                Copy semantic reference
+              </button>
+              <span class="hint">Copies the formatted reference with hanging indent.</span>
             </div>
           </div>
         </div>
@@ -705,13 +714,13 @@
       </h2>
       <p class="guide-text">
         This is a condensed, paraphrased overview of APA 7th rules for student
-        papers, based on a library quick reference. It keeps the structure and
-        main points but uses fresh wording.
+        papers. Always check unusual sources or edge cases against your
+        instructor’s directions or the official APA manual.
       </p>
 
       <h3 class="guide-section-title">1. Core APA style resources</h3>
       <p class="guide-text">
-        APA 7th rules are mainly documented in two books:
+        APA 7th rules are mainly documented in:
       </p>
       <ul class="guide-list">
         <li>
@@ -719,21 +728,20 @@
         </li>
         <li>
           <em>Publication Manual of the American Psychological Association
-          (7th ed.)</em> – full, detailed manual (useful for graduate work).
+          (7th ed.)</em> – full reference manual (ideal for graduate work).
         </li>
       </ul>
       <p class="guide-text">
-        The official APA Style website and blog provide examples, FAQs, and
-        guidance on newer or unusual sources (social media, online videos, etc.).
+        The official APA Style website and blog provide examples and guidance for
+        newer formats like social media, podcasts, videos, and more.
       </p>
 
       <h3 class="guide-section-title">2. Title page (student papers)</h3>
       <p class="guide-text">
-        Unless your instructor specifies something different, a typical student
-        title page includes:
+        Unless told otherwise, a typical student title page includes:
       </p>
       <ul class="guide-list">
-        <li>Paper title (bold, title case, about halfway down the page)</li>
+        <li>Paper title (bold, title case, about halfway down)</li>
         <li>Your name (first name, middle initial, last name)</li>
         <li>Institution name</li>
         <li>Course code and course title</li>
@@ -744,40 +752,37 @@
 
       <h3 class="guide-section-title">3. First text page</h3>
       <p class="guide-text">
-        The page after the title page usually starts your main text:
+        The next page usually starts your main text:
       </p>
       <ul class="guide-list">
         <li>Repeat the paper title at the top, centered and bold.</li>
-        <li>Begin your introduction directly under the title (no heading called “Introduction”).</li>
-        <li>Use double spacing, 1-inch margins, and a readable font (e.g., 11-pt Calibri, 12-pt Times New Roman).</li>
+        <li>Start your introduction directly under the title (no “Introduction” heading).</li>
+        <li>Use double spacing, 1-inch margins, and a readable font (e.g., 11-pt Calibri or 12-pt Times New Roman).</li>
       </ul>
 
       <h3 class="guide-section-title">4. Reference page basics</h3>
       <p class="guide-text">
-        The References list appears on a separate page at the end:
+        The References list goes on its own page at the end:
       </p>
       <ul class="guide-list">
-        <li>Heading: <strong>References</strong>, bold and centered.</li>
-        <li>Entries are double-spaced with no extra blank lines between them.</li>
+        <li>Heading: <strong>References</strong> (bold, centered).</li>
+        <li>Entries are double-spaced with no extra blank lines.</li>
         <li>Order entries alphabetically by the first author’s last name.</li>
         <li>
-          Use a <strong>hanging indent</strong> of 0.5 inch: first line at the
-          margin, remaining lines indented.
+          Use a <strong>hanging indent</strong> of 0.5 inch (first line at the margin, others indented).
         </li>
-        <li>
-          Do not add a period after a DOI or URL at the end of a reference.
-        </li>
+        <li>Don’t add a period after a DOI or URL.</li>
       </ul>
 
       <h3 class="guide-section-title">5. “Who, when, what, where” elements</h3>
       <p class="guide-text">
-        Most references can be broken into four basic parts:
+        Most reference entries follow four questions:
       </p>
       <ul class="guide-list">
-        <li><strong>Who</strong> created the work? (Author, group, or organization)</li>
-        <li><strong>When</strong> was it published? (Year, or full date for some online sources)</li>
-        <li><strong>What</strong> is the work called? (Title, in sentence case)</li>
-        <li><strong>Where</strong> can the reader find it? (Journal or book details, publisher, DOI, or URL)</li>
+        <li><strong>Who</strong> created the work? (author or organization)</li>
+        <li><strong>When</strong> was it published? (year or full date)</li>
+        <li><strong>What</strong> is the work called? (title in sentence case)</li>
+        <li><strong>Where</strong> can readers find it? (journal/book info, publisher, DOI or URL)</li>
       </ul>
 
       <h3 class="guide-section-title">6. In-text citations</h3>
@@ -786,32 +791,27 @@
       </p>
       <ul class="guide-list">
         <li>
-          <strong>Parenthetical:</strong> all info in parentheses, usually at the end of the sentence.
-          Example: <code>(Author, Year)</code> or <code>(Author, Year, p. 23)</code>.
+          <strong>Parenthetical:</strong> everything in parentheses.  
+          Example: <code>(Author, 2015)</code> or <code>(Author, 2015, p. 23)</code>.
         </li>
         <li>
-          <strong>Narrative:</strong> author appears in the sentence; year and
-          page follow in parentheses.
-          Example: <code>Author (Year)</code> or <code>Author (Year, p. 23)</code>.
+          <strong>Narrative:</strong> author in the sentence, year (and page) in parentheses.  
+          Example: <code>Author (2015)</code> or <code>Author (2015, p. 23)</code>.
         </li>
       </ul>
       <p class="guide-text">
-        For specific parts of a source, add page numbers, paragraph numbers, or
-        table/figure numbers after the year, separated by a comma.
+        For specific sections, add page / paragraph / table / figure numbers after the year.
       </p>
 
       <h3 class="guide-section-title">7. DOIs and URLs</h3>
       <p class="guide-text">
-        A DOI (Digital Object Identifier) is a stable link to a work. In APA 7:
+        A DOI (Digital Object Identifier) is a stable link to a work:
       </p>
       <ul class="guide-list">
-        <li>Use the URL-style format: <code>https://doi.org/10.xxxx/xxxxx</code>.</li>
+        <li>Use URL-style DOIs: <code>https://doi.org/10.xxxx/xxxxx</code>.</li>
         <li>Write DOIs and URLs as live links when possible.</li>
         <li>Do not end a reference with a period after a DOI or URL.</li>
-        <li>
-          Short DOIs from services like <code>shortdoi.org</code> are allowed if
-          they still resolve correctly.
-        </li>
+        <li>Short DOIs (e.g., from <code>shortdoi.org</code>) are acceptable if they resolve correctly.</li>
       </ul>
 
       <h3 class="guide-section-title">8. Common reference patterns (simplified)</h3>
@@ -828,7 +828,7 @@
           Publisher.
         </li>
         <li>
-          <strong>Chapter in an edited book:</strong><br />
+          <strong>Chapter in edited book:</strong><br />
           Author, A. A. (Year). Chapter title. In B. B. Editor &amp; C. C.
           Editor (Eds.), <em>Book title</em> (pp. xx–xx). Publisher.
         </li>
@@ -840,10 +840,9 @@
       </ul>
 
       <p class="guide-note">
-        For more unusual formats (social media posts, podcasts, conference
-        posters, ERIC documents, music albums, TED Talks, etc.), follow the
-        same “who, when, what, where” logic and match it to the closest APA
-        example from an official guide or manual.
+        For special formats (social media, podcasts, conference posters, ERIC
+        documents, etc.), use the same “who, when, what, where” logic and match
+        to the closest official APA example.
       </p>
     </section>
 
@@ -862,7 +861,6 @@
     // ========================
     // Semantic Scholar proxy
     // ========================
-    // Your Cloudflare Worker URL
     const S2_PROXY_URL =
       "https://s2-proxy.tusar-gads.workers.dev/api/s2-search";
 
@@ -871,6 +869,20 @@
     // ===============
     function clean(str) {
       return (str || "").toString().trim();
+    }
+
+    // Detect if the search string is likely a DOI (or DOI URL)
+    function extractDoi(str) {
+      if (!str) return "";
+      const trimmed = str.trim();
+      const doiUrlMatch = trimmed.match(/10\.\S+\/\S+/);
+      if (trimmed.toLowerCase().includes("doi.org/")) {
+        return trimmed.split("doi.org/").pop().trim();
+      }
+      if (/^10\.\S+\/\S+$/i.test(trimmed)) {
+        return trimmed;
+      }
+      return doiUrlMatch ? doiUrlMatch[0] : "";
     }
 
     // =========================================
@@ -1036,7 +1048,7 @@
     });
 
     // ============================================
-    // Semantic Scholar: search via proxy & APA
+    // Semantic Scholar: APA conversion
     // ============================================
     function toApaAuthorName(fullName) {
       // Basic "First M. Last" -> "Last, F. M."
@@ -1063,7 +1075,7 @@
         const last = formatted[formatted.length - 1];
         return `${allButLast}, & ${last}`;
       }
-      // 21+ authors: first 19, …, last
+      // 21+ authors: first 19, …, last (APA 7 rule)
       const first19 = formatted.slice(0, 19).join(", ");
       const last = formatted[formatted.length - 1];
       return `${first19}, …, ${last}`;
@@ -1073,9 +1085,25 @@
       const authors = formatAuthorsFromS2(paper.authors || []);
       const year = paper.year || "n.d.";
       const title = paper.title || "";
-      const venue = paper.venue || "";
 
-      // DOI is now inside externalIds
+      // Journal info: try several possible shapes
+      const journalObj = paper.journal || {};
+      const journalName =
+        journalObj.name || paper.venue || journalObj.journalName || "";
+      const volume =
+        journalObj.volume || paper.volume || journalObj.volumeNumber || "";
+      const issue =
+        journalObj.issue || paper.issue || journalObj.issueNumber || "";
+      const firstPage =
+        paper.firstPage || journalObj.firstPage || (paper.pages && paper.pages.split("-")[0]);
+      const lastPage =
+        paper.lastPage || journalObj.lastPage || (paper.pages && paper.pages.split("-")[1]);
+      let pages = paper.pages || journalObj.pages || "";
+      if (!pages && firstPage && lastPage) {
+        pages = `${firstPage}-${lastPage}`;
+      }
+
+      // DOI is inside externalIds
       const rawDoi =
         paper.externalIds &&
         (paper.externalIds.DOI ||
@@ -1102,8 +1130,18 @@
         ref += title.endsWith(".") ? `${title} ` : `${title}. `;
       }
 
-      if (venue) {
-        ref += `<i>${venue}</i>`;
+      if (journalName) {
+        ref += `<i>${journalName}</i>`;
+        if (volume) {
+          ref += `, <i>${volume}`;
+          if (issue) {
+            ref += `(${issue})`;
+          }
+          ref += `</i>`;
+        }
+        if (pages) {
+          ref += `, ${pages}`;
+        }
       }
 
       if (doi) {
@@ -1146,7 +1184,10 @@
               <div class="paper-title">${paper.title || "Untitled"}</div>
               <div class="paper-meta">
                 ${paper.year || "n.d."}${
-          paper.venue ? " · " + paper.venue : ""
+          (paper.journal && paper.journal.name) || paper.venue
+            ? " · " +
+              ((paper.journal && paper.journal.name) || paper.venue)
+            : ""
         }<br/>
                 ${authorsShort || "Unknown authors"}${extraAuthors}
               </div>
@@ -1168,8 +1209,10 @@
         btn.addEventListener("click", () => {
           const ref = apaReferenceFromPaper(paper);
           const box = document.getElementById("s2-citation");
+          const copyBtn = document.getElementById("s2-copy-btn");
           box.classList.remove("empty");
           box.innerHTML = `<span class="citation-line">${ref}</span>`;
+          copyBtn.disabled = false;
         });
 
         container.appendChild(div);
@@ -1182,21 +1225,31 @@
       const status = document.getElementById("s2-status");
       const errorBox = document.getElementById("s2-error");
       const btn = document.getElementById("s2-search-btn");
+      const copyBtn = document.getElementById("s2-copy-btn");
 
       errorBox.style.display = "none";
       errorBox.textContent = "";
+      copyBtn.disabled = true;
 
       if (!query) {
-        errorBox.textContent = "Type a keyword, title, or author name first.";
+        errorBox.textContent = "Type a keyword, title, author, or DOI first.";
         errorBox.style.display = "block";
         return;
       }
 
-      status.textContent = "Searching via Semantic Scholar proxy…";
+      const doi = extractDoi(query);
+      const isDoiLookup = !!doi;
+
+      status.textContent = isDoiLookup
+        ? "Fetching paper metadata by DOI…"
+        : "Searching via Semantic Scholar proxy…";
       btn.disabled = true;
 
       try {
-        const url = `${S2_PROXY_URL}?q=${encodeURIComponent(query)}`;
+        const url = isDoiLookup
+          ? `${S2_PROXY_URL}?doi=${encodeURIComponent(doi)}`
+          : `${S2_PROXY_URL}?q=${encodeURIComponent(query)}`;
+
         const response = await fetch(url);
 
         if (!response.ok) {
@@ -1205,14 +1258,34 @@
         }
 
         const data = await response.json();
-        const results = data.data || data.papers || data.results || [];
 
-        renderS2Results(results);
+        if (isDoiLookup) {
+          // Expect a single paper object
+          const paper = data.data || data.paper || data;
+          if (!paper || !paper.title) {
+            status.textContent = "No paper found for that DOI.";
+            renderS2Results([]);
+            return;
+          }
+          renderS2Results([paper]);
 
-        status.textContent =
-          results.length > 0
-            ? `Showing ${results.length} results from Semantic Scholar.`
-            : "No results found.";
+          // Auto-generate citation for DOI fetch
+          const ref = apaReferenceFromPaper(paper);
+          const box = document.getElementById("s2-citation");
+          box.classList.remove("empty");
+          box.innerHTML = `<span class="citation-line">${ref}</span>`;
+          copyBtn.disabled = false;
+
+          status.textContent =
+            "DOI matched. Reference generated using Semantic Scholar metadata.";
+        } else {
+          const results = data.data || data.papers || data.results || [];
+          renderS2Results(results);
+          status.textContent =
+            results.length > 0
+              ? `Showing ${results.length} results from Semantic Scholar.`
+              : "No results found.";
+        }
       } catch (err) {
         console.error(err);
         errorBox.textContent =
@@ -1234,6 +1307,24 @@
         searchSemanticScholar();
       }
     });
+
+    // Copy button for Semantic Scholar citation
+    document
+      .getElementById("s2-copy-btn")
+      .addEventListener("click", async () => {
+        const box = document.getElementById("s2-citation");
+        if (box.classList.contains("empty")) return;
+        const text = box.innerText || box.textContent;
+        try {
+          await navigator.clipboard.writeText(text);
+          const btn = document.getElementById("s2-copy-btn");
+          const old = btn.textContent;
+          btn.textContent = "Copied!";
+          setTimeout(() => (btn.textContent = old), 1200);
+        } catch (e) {
+          alert("Could not access clipboard. Please copy manually.");
+        }
+      });
   </script>
 </body>
 </html>
