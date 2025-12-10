@@ -1,5 +1,3 @@
----
-
 # 📚 APA 7th Edition Reference Generator
 
 **Semantic Scholar + Crossref Powered • Modern UI • GitHub Pages / Cloudflare Pages Ready**
