@@ -737,3 +737,68 @@ body {
   border-color: #e4e4e7;
 }
 
+/* ============================================================
+   INDEX HERO ROW + AVATAR
+   ============================================================ */
+
+.hero-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.hero-text {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.hero-avatar-link {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.hero-avatar {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(148, 163, 184, 0.7);
+  box-shadow: 0 16px 32px rgba(15, 23, 42, 0.7);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.hero-avatar-link:hover .hero-avatar {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.85);
+  border-color: rgba(129, 140, 248, 0.9);
+}
+
+:root[data-theme="light"] .hero-avatar {
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.16);
+}
+
+:root[data-theme="light"] .hero-avatar-link:hover .hero-avatar {
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.2);
+}
+
+@media (max-width: 720px) {
+  .hero-row {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .hero-avatar {
+    width: 96px;
+    height: 96px;
+  }
+}
