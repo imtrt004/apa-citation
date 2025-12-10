@@ -28,86 +28,161 @@
     </header>
 
     <section class="grid">
-      <!-- Manual APA Generator -->
-      <section class="card">
-        <div class="card-inner">
-          <div class="card-header">
-            <div>
-              <div class="card-title">
-                Manual APA Reference Builder
-                <span class="card-title-pill">Works Cited</span>
-              </div>
-            </div>
-            <div class="pill">APA 7th • Hanging Indent</div>
-          </div>
-
-          <div class="field-full">
-            <label>Content Type</label>
-            <select id="source-type" class="input">
-              <option value="journal">Journal article</option>
-              <option value="book">Book</option>
-              <option value="chapter">Chapter in edited book</option>
-              <option value="webpage">Webpage / online article</option>
-              <option value="generic">Generic / custom</option>
-            </select>
-          </div>
-
-          <div class="field-full">
-            <label>Authors</label>
-            <input id="authors-input" class="input" placeholder="Smith, J. A., & Lee, M. K." />
-          </div>
-
-          <div class="input-row">
-            <div class="field">
-              <label>Year</label>
-              <input id="year-input" class="input" placeholder="2023" />
-            </div>
-            <div class="field">
-              <label>Title</label>
-              <input id="title-input" class="input" placeholder="Article title in sentence case" />
-            </div>
-          </div>
-
-          <div class="input-row">
-            <div class="field">
-              <label>Container (Journal / Book / Website)</label>
-              <input id="container-input" class="input" placeholder="Journal Name" />
-            </div>
-            <div class="field">
-              <label>Volume (and issue)</label>
-              <input id="vol-input" class="input" placeholder="33(30)" />
-            </div>
-          </div>
-
-          <div class="input-row">
-            <div class="field">
-              <label>Pages</label>
-              <input id="pages-input" class="input" placeholder="2059–2068" />
-            </div>
-            <div class="field">
-              <label>Publisher (for books)</label>
-              <input id="publisher-input" class="input" />
-            </div>
-          </div>
-
-          <div class="field-full">
-            <label>DOI or URL</label>
-            <input id="doi-input" class="input" placeholder="https://doi.org/10.xxxx/xxxx" />
-          </div>
-
-          <div class="btn-row">
-            <button id="generate-btn" class="btn">✨ Generate</button>
-            <button id="copy-btn" class="btn secondary" disabled>📋 Copy</button>
-          </div>
-
-          <div id="manual-error" class="error" style="display:none;"></div>
-
-          <div class="citation-label">Generated APA Reference</div>
-          <div id="manual-citation" class="citation-output empty">
-            Your formatted APA reference will appear here.
-          </div>
+<!-- Left: Manual APA generator -->
+<section class="card">
+  <div class="card-inner">
+    <div class="card-header">
+      <div>
+        <div class="card-title">
+          Manual APA Reference Builder
+          <span class="card-title-pill">Works Cited</span>
         </div>
-      </section>
+        <p class="card-description">
+          Choose a content type, see an official-style example from the guide,
+          then fill in only the fields that matter for that source.
+        </p>
+      </div>
+      <div class="pill">APA 7th • Hanging Indent</div>
+    </div>
+
+    <!-- Content type selector -->
+    <div class="field-full">
+      <label for="source-type">Content type</label>
+      <select id="source-type" class="input">
+        <!-- BOOKS -->
+        <option value="book-single">Book (single author)</option>
+        <option value="book-multi">Book (multiple / corporate author)</option>
+        <option value="edited-book">Edited book</option>
+        <option value="chapter-edited-book">Chapter in edited book / anthology</option>
+
+        <!-- PERIODICALS -->
+        <option value="journal-doi">Journal article (with DOI)</option>
+        <option value="journal-no-doi">Journal article (no DOI)</option>
+        <option value="magazine-web">Magazine article (web)</option>
+
+        <!-- REFERENCE WORKS -->
+        <option value="encyclopedia-signed">Encyclopedia entry (signed)</option>
+        <option value="encyclopedia-unsigned">Encyclopedia entry (unsigned)</option>
+
+        <!-- OTHER -->
+        <option value="thesis">Thesis / dissertation</option>
+        <option value="webpage">Webpage on a website</option>
+        <option value="generic">Generic / custom</option>
+      </select>
+    </div>
+
+    <!-- Example from the APA quick guide -->
+    <div id="type-example" class="type-example">
+      <!-- Filled by JS based on content type -->
+    </div>
+
+    <!-- AUTHORS -->
+    <div class="field-full field-group" data-field="authors">
+      <label for="authors-input">Author(s)</label>
+      <input
+        id="authors-input"
+        class="input"
+        type="text"
+        placeholder=""
+      />
+    </div>
+
+    <!-- YEAR -->
+    <div class="field-full field-group" data-field="year">
+      <label for="year-input">Year</label>
+      <input
+        id="year-input"
+        class="input"
+        type="text"
+        placeholder=""
+      />
+    </div>
+
+    <!-- TITLE -->
+    <div class="field-full field-group" data-field="title">
+      <label for="title-input">Title of work</label>
+      <input
+        id="title-input"
+        class="input"
+        type="text"
+        placeholder=""
+      />
+    </div>
+
+    <!-- CONTAINER + VOLUME/ISSUE -->
+    <div class="input-row">
+      <div class="field field-group" data-field="container">
+        <label for="container-input">Journal / book / site / source</label>
+        <input
+          id="container-input"
+          class="input"
+          type="text"
+          placeholder=""
+        />
+      </div>
+      <div class="field field-group" data-field="volIssue">
+        <label for="vol-input">Volume (and issue)</label>
+        <input
+          id="vol-input"
+          class="input"
+          type="text"
+          placeholder=""
+        />
+      </div>
+    </div>
+
+    <!-- PAGES + PUBLISHER -->
+    <div class="input-row">
+      <div class="field field-group" data-field="pages">
+        <label for="pages-input">Page range</label>
+        <input
+          id="pages-input"
+          class="input"
+          type="text"
+          placeholder=""
+        />
+      </div>
+      <div class="field field-group" data-field="publisher">
+        <label for="publisher-input">Publisher / institution</label>
+        <input
+          id="publisher-input"
+          class="input"
+          type="text"
+          placeholder=""
+        />
+      </div>
+    </div>
+
+    <!-- DOI / URL -->
+    <div class="field-full field-group" data-field="doi">
+      <label for="doi-input">DOI or URL</label>
+      <input
+        id="doi-input"
+        class="input"
+        type="text"
+        placeholder=""
+      />
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" id="generate-btn">
+        ✨ Generate reference
+      </button>
+      <button class="btn secondary" id="copy-btn" disabled>
+        📋 Copy to clipboard
+      </button>
+    </div>
+
+    <div id="manual-error" class="error" style="display:none;"></div>
+
+    <div style="margin-top:0.8rem;">
+      <div class="citation-label">Generated APA 7th reference</div>
+      <div id="manual-citation" class="citation-output empty">
+        Your formatted reference will appear here.
+      </div>
+    </div>
+  </div>
+</section>
 
       <!-- Semantic Scholar + Crossref -->
       <section class="card">
