@@ -978,19 +978,22 @@ function apaReferenceFromPaper(paper) {
     ref += title.endsWith(".") ? `${title} ` : `${title}. `;
   }
 
-  if (journalName) {
-    ref += `<i>${journalName}</i>`;
-    if (volume) {
-      ref += `, <i>${volume}`;
-      if (issue) {
-        ref += `(${issue})`;
-      }
-      ref += `</i>`;
-    }
-    if (pages) {
-      ref += `, ${pages}`;
+// before: volume and issue both inside italics
+// after: volume italic, issue not
+
+if (journalName) {
+  ref += `<i>${journalName}</i>`;
+  if (volume) {
+    ref += `, <i>${volume}</i>`;
+    if (issue) {
+      ref += `(${issue})`;
     }
   }
+  if (pages) {
+    ref += `, ${pages}`;
+  }
+}
+
 
   if (doi) {
     ref += `. ${doi}`;
@@ -1010,15 +1013,13 @@ function apaReferenceFromPaper(paper) {
 
 function updateManualFormForType(type) {
   const cfg = CONTENT_TYPES[type] || CONTENT_TYPES["generic"];
+  const needed = new Set(cfg.visibleFields || []);
 
   // Show/hide fields
-  const needed = new Set(cfg.visibleFields || []);
-  document
-    .querySelectorAll(".field-group")
-    .forEach((group) => {
-      const field = group.getAttribute("data-field");
-      group.style.display = needed.has(field) ? "" : "none";
-    });
+  document.querySelectorAll(".field-group").forEach((group) => {
+    const field = group.getAttribute("data-field");
+    group.style.display = needed.has(field) ? "" : "none";
+  });
 
   // Update placeholders
   const ph = cfg.placeholders || {};
@@ -1028,10 +1029,11 @@ function updateManualFormForType(type) {
     el.placeholder = ph[field] || "";
   });
 
-  // Show example
+  // Show example from the manual
   const exampleBox = document.getElementById("type-example");
   exampleBox.innerHTML = cfg.example || "";
 }
+
 
 /* ============================================================
    MANUAL APA GENERATOR
@@ -1046,7 +1048,8 @@ function buildManualApaReference() {
   const year = clean(document.getElementById("year-input").value);
   const title = clean(document.getElementById("title-input").value);
   const container = clean(document.getElementById("container-input").value);
-  const volIssue = clean(document.getElementById("vol-input").value);
+  const volume = clean(document.getElementById("volume-input").value);
+  const issue = clean(document.getElementById("issue-input").value);
   const pages = clean(document.getElementById("pages-input").value);
   const publisher = clean(document.getElementById("publisher-input").value);
   const doiUrl = clean(document.getElementById("doi-input").value);
@@ -1054,11 +1057,19 @@ function buildManualApaReference() {
   const errorBox = document.getElementById("manual-error");
   errorBox.style.display = "none";
 
-  // Basic sanity: if the group normally has authors + year + title, require them
   if (group !== "encyclopedia" && group !== "generic") {
-    if (!authors || !year || !title) {
-      errorBox.textContent =
-        "Please fill in Author(s), Year, and Title for this content type.";
+    if (!authors && cfg.visibleFields.includes("authors")) {
+      errorBox.textContent = "Author(s) is required for this content type.";
+      errorBox.style.display = "block";
+      return "";
+    }
+    if (!year && cfg.visibleFields.includes("year")) {
+      errorBox.textContent = "Year / date is required for this content type.";
+      errorBox.style.display = "block";
+      return "";
+    }
+    if (!title && cfg.visibleFields.includes("title")) {
+      errorBox.textContent = "Title is required for this content type.";
       errorBox.style.display = "block";
       return "";
     }
@@ -1066,7 +1077,6 @@ function buildManualApaReference() {
 
   let ref = "";
 
-  // Authors + year
   if (authors) {
     ref += authors;
   }
@@ -1076,21 +1086,25 @@ function buildManualApaReference() {
     ref += ". ";
   }
 
-  // Title
   if (title) {
     ref += title.endsWith(".") ? `${title} ` : `${title}. `;
   }
 
-  // Group-specific formatting
   if (group === "journal") {
     if (container) {
       ref += `<i>${container}</i>`;
     }
-    if (volIssue) {
-      ref += container ? `, <i>${volIssue}</i>` : `<i>${volIssue}</i>`;
+    if (volume) {
+      ref += container ? `, <i>${volume}</i>` : `<i>${volume}</i>`;
+      if (issue) {
+        ref += `(${issue})`;
+      }
+    } else if (issue) {
+      // rare case: issue only (unlikely, but just in case)
+      ref += container ? `, (${issue})` : `(${issue})`;
     }
     if (pages) {
-      ref += (container || volIssue ? ", " : "") + pages;
+      ref += (container || volume || issue ? ", " : "") + pages;
     }
     if (doiUrl) {
       ref += `. ${doiUrl}`;
@@ -1100,8 +1114,8 @@ function buildManualApaReference() {
   } else if (group === "book") {
     if (container) {
       ref += `<i>${container}</i>`;
-      if (volIssue) {
-        ref += ` (${volIssue})`;
+      if (volume) {
+        ref += ` (${volume})`;
       }
       ref += ". ";
     }
@@ -1154,26 +1168,54 @@ function buildManualApaReference() {
     } else if (publisher) {
       ref += ".";
     }
+  } else if (group === "meeting") {
+    if (publisher) {
+      ref += publisher;
+    }
+    if (doiUrl) {
+      ref += `. ${doiUrl}`;
+    } else if (publisher) {
+      ref += ".";
+    }
+  } else if (group === "music") {
+    if (publisher) {
+      ref += publisher;
+    }
+    if (doiUrl) {
+      ref += `. ${doiUrl}`;
+    } else if (publisher) {
+      ref += ".";
+    }
+  } else if (group === "eric") {
+    if (doiUrl) {
+      ref += `ERIC. ${doiUrl}`;
+    } else {
+      ref += ".";
+    }
   } else if (group === "webpage") {
     if (container) {
-      ref += `${container}. `;
+      ref += `${container} `;
     }
     if (publisher) {
-      ref += `${publisher}. `;
+      ref += publisher + " ";
     }
     if (doiUrl) {
       ref += doiUrl;
+    } else if (container || publisher) {
+      ref = ref.trimEnd() + ".";
     }
   } else {
-    // generic fallback
     if (container) {
       ref += `${container}`;
-      if (volIssue) {
-        ref += `, ${volIssue}`;
+      if (volume) {
+        ref += `, <i>${volume}</i>`;
+        if (issue) {
+          ref += `(${issue})`;
+        }
       }
     }
     if (pages) {
-      ref += (container || volIssue ? ", " : "") + pages;
+      ref += (container || volume || issue ? ", " : "") + pages;
     }
     if (publisher) {
       ref += (container || pages ? ". " : "") + publisher;
@@ -1186,8 +1228,10 @@ function buildManualApaReference() {
   }
 
   ref = ref.replace(/\.\s+(https?:\/\/)/, " $1");
+  ref = ref.replace(/\s+\./g, ".");
   return ref.trim();
 }
+
 
 function renderManualCitation(text) {
   const box = document.getElementById("manual-citation");
@@ -1286,7 +1330,7 @@ function renderS2Results(list) {
    ============================================================ */
 
 function generateS2Citation(paper) {
-  const ref = apaReferenceFromPaper(paper);
+  const ref = (paper);
   const box = document.getElementById("s2-citation");
   const btn = document.getElementById("s2-copy-btn");
 
