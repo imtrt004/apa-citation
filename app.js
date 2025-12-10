@@ -135,15 +135,19 @@ function apaReferenceFromPaper(paper) {
     ref += title.endsWith(".") ? `${title} ` : `${title}. `;
   }
 
-  // Journal block
+  // Journal block  → *Signals, 4*(1), 1–39
   if (journalName) {
     ref += `<i>${journalName}</i>`;
     if (volume) {
       ref += `, <i>${volume}`;
-      if (issue) ref += `(${issue})`;
+      if (issue) {
+        ref += `(${issue})`;
+      }
       ref += `</i>`;
     }
-    if (pages) ref += `, ${pages}`;
+    if (pages) {
+      ref += `, ${pages}`;
+    }
   }
 
   // DOI / URL
